@@ -41,13 +41,13 @@ const Index = () => {
             "text-3xl md:text-4xl font-bold mb-2",
             language === 'np' ? "font-preeti text-4xl md:text-5xl" : "font-mukta"
           )}>
-            {language === 'np' ? "संस्कृति दर्पण पात्रो" : "Sanskriti Darpan Patro"}
+            {language === 'np' ? "मेरो पात्रो" : "Mero Patro"}
           </h1>
           <p className={cn(
             "text-gray-600",
             language === 'np' ? "font-preeti text-xl" : "font-mukta"
           )}>
-            {language === 'np' ? "नेपाली संस्कृति र परम्परा" : "Nepali Culture & Tradition"}
+            {language === 'np' ? "तपाईंको डिजिटल पात्रो" : "Your Digital Calendar"}
           </p>
         </header>
 
@@ -67,7 +67,7 @@ const Index = () => {
         </div>
 
         <footer className="mt-8 text-center text-gray-500 text-sm">
-          <p>© {new Date().getFullYear()} {language === 'np' ? "संस्कृति दर्पण पात्रो" : "Sanskriti Darpan Patro"}</p>
+          <p>© {new Date().getFullYear()} {language === 'np' ? "मेरो पात्रो" : "Mero Patro"}</p>
         </footer>
       </div>
     </div>

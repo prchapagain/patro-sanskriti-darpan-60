@@ -43,11 +43,12 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   return (
     <div className={cn(
       "calendar-header p-4 rounded-t-lg",
-      "flex flex-col md:flex-row items-center justify-between gap-4"
+      "flex flex-col md:flex-row items-center justify-between gap-4",
+      "bg-gradient-to-r from-nepali-purple/90 to-nepali-deepRed/90"
     )}>
       <div className="flex flex-col items-center md:items-start">
         <h1 className={cn(
-          "text-2xl font-bold",
+          "text-2xl font-bold text-white",
           language === 'np' ? "font-preeti text-3xl" : "font-mukta"
         )}>
           {language === 'np' ? `${monthName} ${bsYear}` : `${monthName} ${bsYear} BS`}
@@ -61,7 +62,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         <Button 
           variant="outline" 
           size="sm" 
-          className="bg-white/10 hover:bg-white/20 border-white/20"
+          className="bg-white/10 hover:bg-white/20 border-white/20 text-white"
           onClick={onPrevMonth}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -70,7 +71,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         <Button 
           variant="outline" 
           size="sm" 
-          className="bg-white/10 hover:bg-white/20 border-white/20"
+          className="bg-white/10 hover:bg-white/20 border-white/20 text-white"
           onClick={onToday}
         >
           <Calendar className="h-4 w-4 mr-1" />
@@ -80,7 +81,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         <Button 
           variant="outline" 
           size="sm" 
-          className="bg-white/10 hover:bg-white/20 border-white/20"
+          className="bg-white/10 hover:bg-white/20 border-white/20 text-white"
           onClick={onNextMonth}
         >
           <ChevronRight className="h-4 w-4" />
@@ -89,7 +90,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         <Button 
           variant="outline" 
           size="sm" 
-          className="bg-white/10 hover:bg-white/20 border-white/20"
+          className="bg-white/10 hover:bg-white/20 border-white/20 text-white"
           onClick={onLanguageToggle}
         >
           <Languages className="h-4 w-4 mr-1" />
