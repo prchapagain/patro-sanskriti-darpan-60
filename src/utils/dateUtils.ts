@@ -1,4 +1,3 @@
-
 // Nepali date conversion utilities
 // These functions handle conversion between Bikram Sambat and Gregorian calendars
 
@@ -10,6 +9,20 @@ interface BsMonth {
 interface BsDay {
   np: string;
   en: string;
+}
+
+interface Festival {
+  np: string;
+  en: string;
+  type: 'festival' | 'thithi' | 'special';
+}
+
+interface DayInfo {
+  festivals: Festival[];
+  thithi?: {
+    np: string;
+    en: string;
+  };
 }
 
 // Nepali months in both Nepali and English
@@ -65,20 +78,89 @@ export const bsMonthLengths: { [year: number]: number[] } = {
   2081: [31, 31, 32, 32, 31, 30, 30, 30, 29, 30, 29, 30]  // 2081 BS (2024-2025 AD)
 };
 
-// Demo festivals (In a real app, this would be more comprehensive)
-export const festivals: { [key: string]: { [key: string]: string[] } } = {
+// Enhanced festivals data structure with both Nepali and English names
+export const festivals: { [key: string]: { [key: string]: { [key: string]: DayInfo } } } = {
   "2080": {
-    "1": { "14": ["नया वर्ष"] }, // New Year
-    "2": { "5": ["बुद्ध जयन्ति"] }, // Buddha Jayanti
-    "3": { "29": ["रक्षा बन्धन"] }, // Raksha Bandhan
-    "6": { "24": ["दशैं"] }, // Dashain
-    "7": { "12": ["तिहार"] }, // Tihar
+    "1": {
+      "14": {
+        festivals: [
+          { np: "नयाँ वर्ष", en: "New Year", type: "festival" }
+        ],
+        thithi: { np: "पूर्णिमा", en: "Purnima" }
+      },
+      "15": {
+        festivals: [
+          { np: "मेष संक्रान्ति", en: "Mesh Sankranti", type: "special" }
+        ],
+        thithi: { np: "प्रतिपदा", en: "Pratipada" }
+      }
+    },
+    "2": {
+      "5": {
+        festivals: [
+          { np: "बुद्ध जयन्ति", en: "Buddha Jayanti", type: "festival" }
+        ],
+        thithi: { np: "पञ्चमी", en: "Panchami" }
+      }
+    },
+    "3": {
+      "29": {
+        festivals: [
+          { np: "रक्षा बन्धन", en: "Raksha Bandhan", type: "festival" }
+        ],
+        thithi: { np: "पूर्णिमा", en: "Purnima" }
+      }
+    },
+    "6": {
+      "24": {
+        festivals: [
+          { np: "दशैं", en: "Dashain", type: "festival" }
+        ],
+        thithi: { np: "नवमी", en: "Navami" }
+      }
+    },
+    "7": {
+      "12": {
+        festivals: [
+          { np: "तिहार", en: "Tihar", type: "festival" }
+        ],
+        thithi: { np: "द्वादशी", en: "Dwadashi" }
+      }
+    }
   },
   "2081": {
-    "1": { "14": ["नया वर्ष"] }, // New Year
-    "2": { "15": ["बुद्ध जयन्ति"] }, // Buddha Jayanti
-    "6": { "12": ["दशैं"] }, // Dashain
-    "7": { "2": ["तिहार"] }, // Tihar
+    "1": {
+      "14": {
+        festivals: [
+          { np: "नयाँ वर्ष", en: "New Year", type: "festival" }
+        ],
+        thithi: { np: "पूर्णिमा", en: "Purnima" }
+      }
+    },
+    "2": {
+      "15": {
+        festivals: [
+          { np: "बुद्ध जयन्ति", en: "Buddha Jayanti", type: "festival" }
+        ],
+        thithi: { np: "पञ्चमी", en: "Panchami" }
+      }
+    },
+    "6": {
+      "12": {
+        festivals: [
+          { np: "दशैं", en: "Dashain", type: "festival" }
+        ],
+        thithi: { np: "नवमी", en: "Navami" }
+      }
+    },
+    "7": {
+      "2": {
+        festivals: [
+          { np: "तिहार", en: "Tihar", type: "festival" }
+        ],
+        thithi: { np: "द्वादशी", en: "Dwadashi" }
+      }
+    }
   }
 };
 
@@ -130,7 +212,7 @@ export function getBsDate(date: Date): {year: number, month: number, day: number
 // Check if a date has any festival
 export function hasFestival(year: number, month: number, day: number): boolean {
   const yearStr = year.toString();
-  const monthStr = (month + 1).toString(); // Converting 0-indexed to 1-indexed
+  const monthStr = (month + 1).toString();
   const dayStr = day.toString();
   
   return !!festivals[yearStr]?.[monthStr]?.[dayStr];
@@ -139,8 +221,23 @@ export function hasFestival(year: number, month: number, day: number): boolean {
 // Get festival name
 export function getFestivalName(year: number, month: number, day: number, language: 'np' | 'en'): string[] {
   const yearStr = year.toString();
-  const monthStr = (month + 1).toString(); // Converting 0-indexed to 1-indexed
+  const monthStr = (month + 1).toString();
   const dayStr = day.toString();
   
-  return festivals[yearStr]?.[monthStr]?.[dayStr] || [];
+  const dayInfo = festivals[yearStr]?.[monthStr]?.[dayStr];
+  if (!dayInfo) return [];
+  
+  const names: string[] = [];
+  
+  // Add festivals
+  dayInfo.festivals.forEach(festival => {
+    names.push(festival[language]);
+  });
+  
+  // Add thithi if present
+  if (dayInfo.thithi) {
+    names.push(dayInfo.thithi[language]);
+  }
+  
+  return names;
 }
