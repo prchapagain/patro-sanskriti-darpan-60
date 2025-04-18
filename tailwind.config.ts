@@ -1,4 +1,5 @@
-import type { Config } from "tailwindcss";
+
+import type { Config } from "tailwind.css";
 
 export default {
 	darkMode: ["class"],
@@ -61,7 +62,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+                // Nepali patro color palette
+                nepali: {
+                    red: '#D32F2F',
+                    deepRed: '#B71C1C',
+                    yellow: '#F9A825',
+                    purple: '#7E57C2',
+                    turquoise: '#26A69A',
+                    gold: '#FFD54F',
+                    orange: '#FF7043'
+                }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,13 +95,36 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+                },
+                'float': {
+                    '0%, 100%': {
+                        transform: 'translateY(0)'
+                    },
+                    '50%': {
+                        transform: 'translateY(-5px)'
+                    }
+                },
+                'fade-in': {
+                    from: {
+                        opacity: '0'
+                    },
+                    to: {
+                        opacity: '1'
+                    }
+                }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+                'float': 'float 3s ease-in-out infinite',
+                'fade-in': 'fade-in 0.5s ease-out'
+			},
+            fontFamily: {
+                preeti: ['Preeti', 'sans-serif'],
+                mukta: ['Mukta Mahee', 'sans-serif']
+            }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+
