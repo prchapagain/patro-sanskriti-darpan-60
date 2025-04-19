@@ -31,7 +31,7 @@ export const nepaliMonthData: { [year: number]: number[] } = {
   2097: [30, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
   2098: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
   2099: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
-  2100: [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+  2100: [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30]
 };
 
 // Reference date for conversion: Jan 1, 2014 AD = Poush 17, 2070 BS
@@ -40,4 +40,12 @@ export const referenceBsDate = {
   year: 2070,
   month: 8, // Poush = 8 (0-indexed)
   day: 17
+};
+
+// Updated reference: April 14, 2023 = Baisakh 1, 2080 BS (more recent and accurate)
+export const referenceEnDate2 = new Date(2023, 3, 14); // April 14, 2023
+export const referenceBsDate2 = {
+  year: 2080,
+  month: 0, // Baisakh = 0 (0-indexed)
+  day: 1
 };
