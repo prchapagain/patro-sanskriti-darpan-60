@@ -40,6 +40,8 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   
   const gregMonthName = englishMonths[gregMonth];
   
+  console.log(`Calendar header showing: ${monthName} ${bsYear} BS / ${gregMonthName} ${gregYear}`);
+  
   return (
     <div className={cn(
       "calendar-header p-4 rounded-t-lg",

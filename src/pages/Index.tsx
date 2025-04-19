@@ -1,12 +1,16 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CalendarHeader from "@/components/CalendarHeader";
 import CalendarGrid from "@/components/CalendarGrid";
 import { cn } from "@/lib/utils";
 
 const Index = () => {
   // Ensure date is set to the current system date (April 19, 2025)
-  const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(() => {
+    const today = new Date();
+    console.log("Today's date initialized as:", today);
+    return today;
+  });
   const [language, setLanguage] = useState<'np' | 'en'>('np');
 
   const handlePrevMonth = () => {
@@ -22,7 +26,9 @@ const Index = () => {
   };
 
   const handleToday = () => {
-    setCurrentDate(new Date());
+    const today = new Date();
+    console.log("Setting date to today:", today);
+    setCurrentDate(today);
   };
 
   const toggleLanguage = () => {
