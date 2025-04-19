@@ -1,4 +1,5 @@
-import { FestivalData } from './types';
+
+import { FestivalData, Festival, DayInfo } from './types';
 
 export const festivals: FestivalData = {
   "2080": {
@@ -93,6 +94,14 @@ export function hasFestival(year: number, month: number, day: number): boolean {
   return !!festivals[yearStr]?.[monthStr]?.[dayStr];
 }
 
+export function getFestivalInfo(year: number, month: number, day: number): DayInfo | null {
+  const yearStr = year.toString();
+  const monthStr = (month + 1).toString();
+  const dayStr = day.toString();
+  
+  return festivals[yearStr]?.[monthStr]?.[dayStr] || null;
+}
+
 export function getFestivalName(year: number, month: number, day: number, language: 'np' | 'en'): string[] {
   const yearStr = year.toString();
   const monthStr = (month + 1).toString();
@@ -107,9 +116,16 @@ export function getFestivalName(year: number, month: number, day: number, langua
     names.push(festival[language]);
   });
   
-  if (dayInfo.thithi) {
-    names.push(dayInfo.thithi[language]);
-  }
-  
   return names;
+}
+
+export function getThithi(year: number, month: number, day: number, language: 'np' | 'en'): string | null {
+  const yearStr = year.toString();
+  const monthStr = (month + 1).toString();
+  const dayStr = day.toString();
+  
+  const dayInfo = festivals[yearStr]?.[monthStr]?.[dayStr];
+  if (!dayInfo || !dayInfo.thithi) return null;
+  
+  return dayInfo.thithi[language];
 }

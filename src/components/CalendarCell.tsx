@@ -2,7 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Calendar, Moon } from "lucide-react";
-import { hasFestival, getFestivalName, toNepaliDigits } from "@/utils/dateUtils";
+import { hasFestival, getFestivalName, getThithi, toNepaliDigits } from "@/utils/dateUtils";
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +31,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
 }) => {
   const hasFest = hasFestival(bsYear, bsMonth, bsDay);
   const festivalNames = hasFest ? getFestivalName(bsYear, bsMonth, bsDay, language) : [];
+  const thithi = getThithi(bsYear, bsMonth, bsDay, language);
   
   // Display number based on language
   const displayDay = language === 'np' ? toNepaliDigits(bsDay) : bsDay.toString();
@@ -62,37 +63,44 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               <span className="text-gray-500">{displayGregDay}</span>
             </div>
             
-            {hasFest && (
-              <div className="mt-1 flex flex-col gap-0.5">
-                {festivalNames.map((name, index) => (
-                  <div 
-                    key={index} 
-                    className={cn(
-                      "text-[10px] truncate",
-                      index === festivalNames.length - 1 ? "text-nepali-purple" : "text-nepali-red"
-                    )}
-                  >
-                    <span className="inline-flex items-center">
-                      {index === festivalNames.length - 1 ? (
-                        <Moon className="h-3 w-3 mr-0.5" />
-                      ) : (
-                        <Calendar className="h-3 w-3 mr-0.5" />
-                      )}
-                      {name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="mt-1 flex flex-col gap-0.5">
+              {/* Show festivals */}
+              {festivalNames.map((name, index) => (
+                <div 
+                  key={`festival-${index}`} 
+                  className="text-[10px] truncate text-nepali-red"
+                >
+                  <span className="inline-flex items-center">
+                    <Calendar className="h-3 w-3 mr-0.5" />
+                    {name}
+                  </span>
+                </div>
+              ))}
+              
+              {/* Show thithi if available */}
+              {thithi && (
+                <div className="text-[10px] truncate text-nepali-purple">
+                  <span className="inline-flex items-center">
+                    <Moon className="h-3 w-3 mr-0.5" />
+                    {thithi}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </TooltipTrigger>
         <TooltipContent>
           <div className="text-sm">
             {festivalNames.map((name, index) => (
-              <div key={index} className="font-medium">
+              <div key={`tooltip-festival-${index}`} className="font-medium text-nepali-red">
                 {name}
               </div>
             ))}
+            {thithi && (
+              <div className="font-medium text-nepali-purple">
+                {thithi}
+              </div>
+            )}
           </div>
         </TooltipContent>
       </Tooltip>
@@ -101,4 +109,3 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
 };
 
 export default CalendarCell;
-
