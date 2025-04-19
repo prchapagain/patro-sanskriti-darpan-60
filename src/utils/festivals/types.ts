@@ -2,7 +2,7 @@
 export interface Festival {
   np: string;
   en: string;
-  type: 'festival' | 'thithi' | 'special';
+  type: 'festival' | 'thithi' | 'special' | 'national' | 'international';
 }
 
 export interface DayInfo {

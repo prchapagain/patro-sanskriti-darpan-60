@@ -1,5 +1,6 @@
 
 import { FestivalData, Festival, DayInfo } from './types';
+import { getTithiFromBsDate as calculateTithiFromBsDate, getTithiName as calculateTithiName } from '../convert/nepaliDate';
 
 const tithiData = {
   "1": { np: "प्रतिपदा", en: "Pratipada" },
@@ -264,10 +265,9 @@ export function getFestivalName(year: number, month: number, day: number, langua
 }
 
 export function getThithi(year: number, month: number, day: number, language: 'np' | 'en'): string | null {
-  // Get tithi number from our custom implementation
-  const { getTithiFromBsDate, getTithiName } = require('./nepaliDate');
-  const tithiNumber = getTithiFromBsDate(year, month, day);
-  return getTithiName(tithiNumber, language);
+  // Get tithi number from imported functions instead of using require()
+  const tithiNumber = calculateTithiFromBsDate(year, month, day);
+  return calculateTithiName(tithiNumber, language);
 }
 
 // Get international days based on Gregorian date
