@@ -5,15 +5,25 @@ import { nepaliMonthData, referenceEnDate2, referenceBsDate2 } from './nepaliMon
 
 // Convert Gregorian (AD) date to Bikram Sambat (BS) date
 export const getBsDate = (date: Date): { year: number; month: number; day: number } => {
+  // Ensure we're working with a fresh date to avoid timezone issues
+  const inputDate = new Date(date.getTime());
+  // Reset hours to ensure consistent day calculations
+  inputDate.setHours(0, 0, 0, 0);
+  
   // Using the more recent reference point
-  const referenceDate = referenceEnDate2;
+  const referenceDate = new Date(referenceEnDate2.getTime());
+  // Reset hours to ensure consistent day calculations
+  referenceDate.setHours(0, 0, 0, 0);
+  
   const referenceBsYear = referenceBsDate2.year;
   const referenceBsMonth = referenceBsDate2.month;
   const referenceBsDay = referenceBsDate2.day;
   
-  // Calculate difference in days
-  const diffTime = date.getTime() - referenceDate.getTime();
+  // Calculate difference in days (ensuring proper date comparison)
+  const diffTime = inputDate.getTime() - referenceDate.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  console.log('Converting date:', inputDate.toISOString(), 'to BS. Diff days from reference:', diffDays);
   
   // If date is earlier than reference, handle differently
   if (diffDays < 0) {

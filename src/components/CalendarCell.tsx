@@ -24,6 +24,7 @@ interface CalendarCellProps {
   isToday: boolean;
   language: 'np' | 'en';
   isCurrentMonth: boolean;
+  isSaturday: boolean;
 }
 
 const CalendarCell: React.FC<CalendarCellProps> = ({
@@ -33,7 +34,8 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
   gregorianDate,
   isToday,
   language,
-  isCurrentMonth
+  isCurrentMonth,
+  isSaturday
 }) => {
   const hasFest = hasFestival(bsYear, bsMonth, bsDay);
   const festivalNames = hasFest ? getFestivalName(bsYear, bsMonth, bsDay, language) : [];
@@ -42,9 +44,6 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
 
   // Check if this day is a holiday/leave (बिदा)
   const isHoliday = festivalNames.length > 0;
-  
-  // Check if this day is a Saturday
-  const isSaturday = gregorianDate.getDay() === 6;
   
   const displayDay = isToday 
     ? (language === 'np' ? "आज" : "Today") 
@@ -63,7 +62,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               "hover:shadow-lg hover:scale-105 transform",
               isToday ? "bg-amber-50 border-amber-300 ring-2 ring-amber-300" : "", // Enhanced today highlight
               isHoliday ? "animate-pulse-slow bg-red-50/30" : "",
-              isSaturday ? "bg-red-50/20 border-red-200" : "", // Enhanced Saturday highlight
+              isSaturday ? "bg-red-50/20 border-red-200" : "", // Saturday highlight
               isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-400",
               "flex flex-col"
             )}

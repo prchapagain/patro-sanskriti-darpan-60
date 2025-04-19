@@ -5,10 +5,12 @@ import CalendarGrid from "@/components/CalendarGrid";
 import { cn } from "@/lib/utils";
 
 const Index = () => {
-  // Ensure date is set to the current system date (April 19, 2025)
+  // Ensure date is set to the current system date
   const [currentDate, setCurrentDate] = useState<Date>(() => {
+    // Create a new date object with time set to noon to avoid timezone issues
     const today = new Date();
-    console.log("Today's date initialized as:", today);
+    today.setHours(12, 0, 0, 0);
+    console.log("Today's date initialized as:", today.toISOString());
     return today;
   });
   const [language, setLanguage] = useState<'np' | 'en'>('np');
@@ -27,7 +29,8 @@ const Index = () => {
 
   const handleToday = () => {
     const today = new Date();
-    console.log("Setting date to today:", today);
+    today.setHours(12, 0, 0, 0);
+    console.log("Setting date to today:", today.toISOString());
     setCurrentDate(today);
   };
 
@@ -35,7 +38,7 @@ const Index = () => {
     setLanguage(language === 'np' ? 'en' : 'np');
   };
 
-  console.log("Current date in Index:", currentDate);
+  console.log("Current date in Index:", currentDate.toISOString());
 
   return (
     <div className={cn(
