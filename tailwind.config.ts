@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwind.css";
 
 export default {
@@ -75,7 +76,8 @@ export default {
 			},
 			fontFamily: {
                 preeti: ['Noto Sans Devanagari', 'system-ui', 'sans-serif'],
-                mukta: ['Mukta Mahee', 'sans-serif']
+                mukta: ['Mukta Mahee', 'sans-serif'],
+                noto: ['Noto Sans Devanagari', 'system-ui', 'sans-serif']
             },
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -39,13 +39,13 @@ const Index = () => {
         <header className="text-center mb-8">
           <h1 className={cn(
             "text-3xl md:text-4xl font-bold mb-2",
-            language === 'np' ? "font-preeti text-4xl md:text-5xl" : "font-mukta"
+            language === 'np' ? "font-noto text-4xl md:text-5xl" : "font-mukta"
           )}>
             {language === 'np' ? "मेरो पात्रो" : "Mero Patro"}
           </h1>
           <p className={cn(
             "text-gray-600",
-            language === 'np' ? "font-preeti text-xl" : "font-mukta"
+            language === 'np' ? "font-noto text-xl" : "font-mukta"
           )}>
             {language === 'np' ? "तपाईंको डिजिटल पात्रो" : "Your Digital Calendar"}
           </p>

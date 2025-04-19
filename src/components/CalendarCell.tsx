@@ -1,7 +1,14 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Calendar, Moon } from "lucide-react";
-import { hasFestival, getFestivalName, getThithi, toNepaliDigits } from "@/utils/dateUtils";
+import { Calendar, Moon, Globe } from "lucide-react";
+import { 
+  hasFestival, 
+  getFestivalName, 
+  getThithi, 
+  toNepaliDigits,
+  getInternationalDays
+} from "@/utils/dateUtils";
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +38,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
   const hasFest = hasFestival(bsYear, bsMonth, bsDay);
   const festivalNames = hasFest ? getFestivalName(bsYear, bsMonth, bsDay, language) : [];
   const thithi = getThithi(bsYear, bsMonth, bsDay, language);
+  const internationalDays = getInternationalDays(gregorianDate, language);
   
   // Display number based on language
   const displayDay = language === 'np' ? toNepaliDigits(bsDay) : bsDay.toString();
@@ -46,8 +54,8 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
           <div 
             className={cn(
               "relative min-h-[80px] p-1 border rounded-md transition-all duration-200 hover:shadow-md",
-              isToday ? "today-cell" : "",
-              hasFest ? "festival-day" : "",
+              isToday ? "bg-amber-50 border-amber-300" : "",
+              hasFest ? "festival-day border-nepali-red/30" : "",
               isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-400",
               "flex flex-col"
             )}
@@ -56,7 +64,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               <span className={cn(
                 "font-bold", 
                 hasFest ? "text-nepali-red" : "",
-                language === 'np' ? "font-preeti" : ""  // Apply Nepali font
+                language === 'np' ? "font-noto" : ""  // Apply Nepali font
               )}>
                 {displayDay}
               </span>
@@ -70,7 +78,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
                   key={`festival-${index}`} 
                   className={cn(
                     "text-[10px] truncate text-nepali-red",
-                    language === 'np' ? "font-preeti" : "" // Apply Nepali font
+                    language === 'np' ? "font-noto" : "" // Apply Nepali font
                   )}
                 >
                   <span className="inline-flex items-center">
@@ -80,11 +88,27 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
                 </div>
               ))}
               
+              {/* Show international days */}
+              {internationalDays.map((name, index) => (
+                <div 
+                  key={`international-${index}`} 
+                  className={cn(
+                    "text-[10px] truncate text-nepali-turquoise",
+                    language === 'np' ? "font-noto" : "" // Apply Nepali font
+                  )}
+                >
+                  <span className="inline-flex items-center">
+                    <Globe className="h-3 w-3 mr-0.5" />
+                    {name}
+                  </span>
+                </div>
+              ))}
+              
               {/* Show thithi with improved styling */}
               {thithi && (
                 <div className={cn(
                   "text-[10px] truncate text-nepali-purple",
-                  language === 'np' ? "font-preeti" : "" // Apply Nepali font
+                  language === 'np' ? "font-noto" : "" // Apply Nepali font
                 )}>
                   <span className="inline-flex items-center">
                     <Moon className="h-3 w-3 mr-0.5" />
@@ -98,10 +122,15 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
         <TooltipContent>
           <div className={cn(
             "text-sm",
-            language === 'np' ? "font-preeti" : "" // Apply Nepali font
+            language === 'np' ? "font-noto" : "" // Apply Nepali font
           )}>
             {festivalNames.map((name, index) => (
               <div key={`tooltip-festival-${index}`} className="font-medium text-nepali-red">
+                {name}
+              </div>
+            ))}
+            {internationalDays.map((name, index) => (
+              <div key={`tooltip-international-${index}`} className="font-medium text-nepali-turquoise">
                 {name}
               </div>
             ))}

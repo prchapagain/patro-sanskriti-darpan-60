@@ -49,7 +49,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       <div className="flex flex-col items-center md:items-start">
         <h1 className={cn(
           "text-2xl font-bold text-white",
-          language === 'np' ? "font-preeti text-3xl" : "font-mukta"
+          language === 'np' ? "font-noto text-3xl" : "font-mukta"
         )}>
           {language === 'np' ? `${monthName} ${bsYear}` : `${monthName} ${bsYear} BS`}
         </h1>

@@ -1,3 +1,4 @@
+export * from './nepaliDate';
 
 export const bsMonthLengths: { [year: number]: number[] } = {
   2080: [31, 31, 32, 32, 31, 30, 30, 30, 29, 30, 29, 31],
