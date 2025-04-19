@@ -39,14 +39,14 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
   const festivalNames = hasFest ? getFestivalName(bsYear, bsMonth, bsDay, language) : [];
   const thithi = getThithi(bsYear, bsMonth, bsDay, language);
   const internationalDays = getInternationalDays(gregorianDate, language);
+
+  // Check if this day is a holiday/leave (बिदा)
+  const isHoliday = festivalNames.length > 0;
   
-  // Display "आज" for today in Nepali mode, "Today" in English mode,
-  // or just the day number for other days
   const displayDay = isToday 
     ? (language === 'np' ? "आज" : "Today") 
     : (language === 'np' ? toNepaliDigits(bsDay) : bsDay.toString());
   
-  // Gregorian date display
   const gregDay = gregorianDate.getDate();
   const displayGregDay = language === 'np' ? toNepaliDigits(gregDay) : gregDay.toString();
 
@@ -56,32 +56,42 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
         <TooltipTrigger asChild>
           <div 
             className={cn(
-              "relative min-h-[80px] p-1 border rounded-md transition-all duration-200 hover:shadow-md",
+              "relative min-h-[80px] p-1 border rounded-md transition-all duration-300",
+              "hover:shadow-lg hover:scale-105 transform",
               isToday ? "bg-amber-50 border-amber-300" : "",
-              hasFest ? "festival-day border-nepali-red/30" : "",
+              isHoliday ? "animate-pulse-slow bg-red-50/30" : "",
               isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-400",
               "flex flex-col"
             )}
           >
-            <div className="flex justify-between text-xs">
+            <div className={cn(
+              "flex justify-between text-xs",
+              isHoliday && "text-red-600 font-bold"
+            )}>
               <span className={cn(
                 "font-bold", 
-                isToday ? "text-amber-500" : (hasFest ? "text-nepali-red" : ""),
+                isToday ? "text-amber-500" : "",
+                isHoliday ? "text-red-600" : "",
                 language === 'np' ? "font-noto" : ""
               )}>
                 {displayDay}
               </span>
-              <span className="text-gray-500">{displayGregDay}</span>
+              <span className={isHoliday ? "text-red-400" : "text-gray-500"}>
+                {displayGregDay}
+              </span>
             </div>
             
             <div className="mt-1 flex flex-col gap-0.5">
-              {/* Show festivals */}
+              {/* Show festivals with enhanced styling */}
               {festivalNames.map((name, index) => (
                 <div 
                   key={`festival-${index}`} 
                   className={cn(
-                    "text-[10px] truncate text-nepali-red",
-                    language === 'np' ? "font-noto" : ""
+                    "text-[10px] truncate",
+                    "text-red-600 font-semibold",
+                    "animate-fade-in-slow",
+                    language === 'np' ? "font-noto" : "",
+                    isHoliday && "bg-red-50/50 rounded px-1 py-0.5"
                   )}
                 >
                   <span className="inline-flex items-center">
@@ -96,7 +106,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
                 <div 
                   key={`international-${index}`} 
                   className={cn(
-                    "text-[10px] truncate text-nepali-turquoise",
+                    "text-[10px] truncate text-nepali-turquoise animate-fade-in-slow",
                     language === 'np' ? "font-noto" : ""
                   )}
                 >
@@ -110,7 +120,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               {/* Show thithi with improved styling */}
               {thithi && (
                 <div className={cn(
-                  "text-[10px] truncate text-nepali-purple",
+                  "text-[10px] truncate text-nepali-purple animate-fade-in-slow",
                   language === 'np' ? "font-noto" : ""
                 )}>
                   <span className="inline-flex items-center">
@@ -122,13 +132,24 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
             </div>
           </div>
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent 
+          className={cn(
+            isHoliday ? "bg-red-50 border-red-200" : "",
+            "animate-in fade-in-0 zoom-in-95"
+          )}
+        >
           <div className={cn(
             "text-sm",
             language === 'np' ? "font-noto" : ""
           )}>
             {festivalNames.map((name, index) => (
-              <div key={`tooltip-festival-${index}`} className="font-medium text-nepali-red">
+              <div 
+                key={`tooltip-festival-${index}`} 
+                className={cn(
+                  "font-medium",
+                  isHoliday ? "text-red-600" : "text-nepali-red"
+                )}
+              >
                 {name}
               </div>
             ))}
