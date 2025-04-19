@@ -43,6 +43,9 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
   // Check if this day is a holiday/leave (बिदा)
   const isHoliday = festivalNames.length > 0;
   
+  // Check if this day is a Saturday
+  const isSaturday = gregorianDate.getDay() === 6;
+  
   const displayDay = isToday 
     ? (language === 'np' ? "आज" : "Today") 
     : (language === 'np' ? toNepaliDigits(bsDay) : bsDay.toString());
@@ -60,23 +63,24 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               "hover:shadow-lg hover:scale-105 transform",
               isToday ? "bg-amber-50 border-amber-300" : "",
               isHoliday ? "animate-pulse-slow bg-red-50/30" : "",
+              isSaturday ? "bg-red-50/20" : "",
               isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-400",
               "flex flex-col"
             )}
           >
             <div className={cn(
               "flex justify-between text-xs",
-              isHoliday && "text-red-600 font-bold"
+              (isHoliday || isSaturday) && "text-red-600 font-bold"
             )}>
               <span className={cn(
                 "font-bold", 
                 isToday ? "text-amber-500" : "",
-                isHoliday ? "text-red-600" : "",
+                (isHoliday || isSaturday) ? "text-red-600" : "",
                 language === 'np' ? "font-noto" : ""
               )}>
                 {displayDay}
               </span>
-              <span className={isHoliday ? "text-red-400" : "text-gray-500"}>
+              <span className={(isHoliday || isSaturday) ? "text-red-400" : "text-gray-500"}>
                 {displayGregDay}
               </span>
             </div>
@@ -134,7 +138,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
         </TooltipTrigger>
         <TooltipContent 
           className={cn(
-            isHoliday ? "bg-red-50 border-red-200" : "",
+            (isHoliday || isSaturday) ? "bg-red-50 border-red-200" : "",
             "animate-in fade-in-0 zoom-in-95"
           )}
         >
@@ -142,6 +146,11 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
             "text-sm",
             language === 'np' ? "font-noto" : ""
           )}>
+            {isSaturday && !isHoliday && (
+              <div className="font-medium text-red-600">
+                {language === 'np' ? "शनिबार बिदा" : "Saturday Holiday"}
+              </div>
+            )}
             {festivalNames.map((name, index) => (
               <div 
                 key={`tooltip-festival-${index}`} 
