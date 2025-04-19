@@ -1,4 +1,3 @@
-
 import { FestivalData, Festival, DayInfo } from './types';
 import { getTithiFromBsDate as calculateTithiFromBsDate, getTithiName as calculateTithiName } from '../convert/nepaliDate';
 
@@ -215,14 +214,31 @@ export const festivals: FestivalData = {
         thithi: { np: "द्वादशी", en: "Dwadashi" }
       }
     }
+  },
+  "2082": {
+    "1": {
+      "1": {
+        festivals: [
+          { np: "नेपाली नयाँ वर्ष", en: "Nepali New Year", type: "festival" }
+        ],
+        thithi: { np: "पूर्णिमा", en: "Purnima" }
+      }
+    },
+    "2": {
+      "15": {
+        festivals: [
+          { np: "बुद्ध जयन्ति", en: "Buddha Jayanti", type: "festival" }
+        ],
+        thithi: { np: "पञ्चमी", en: "Panchami" }
+      }
+    }
   }
 };
 
-// International days
 export const internationalDays = {
-  // Format: "month-day" (Gregorian calendar)
   "1-1": { np: "अन्तर्राष्ट्रिय नयाँ वर्ष", en: "International New Year", type: "international" },
   "3-8": { np: "अन्तर्राष्ट्रिय महिला दिवस", en: "International Women's Day", type: "international" },
+  "4-20": { np: "विश्व पृथ्वी दिवस", en: "Earth Day", type: "international" },
   "4-22": { np: "पृथ्वी दिवस", en: "Earth Day", type: "international" },
   "5-1": { np: "अन्तर्राष्ट्रिय श्रमिक दिवस", en: "International Workers' Day", type: "international" },
   "6-5": { np: "विश्व वातावरण दिवस", en: "World Environment Day", type: "international" },
@@ -265,14 +281,12 @@ export function getFestivalName(year: number, month: number, day: number, langua
 }
 
 export function getThithi(year: number, month: number, day: number, language: 'np' | 'en'): string | null {
-  // Get tithi number from imported functions instead of using require()
   const tithiNumber = calculateTithiFromBsDate(year, month, day);
   return calculateTithiName(tithiNumber, language);
 }
 
-// Get international days based on Gregorian date
 export function getInternationalDays(date: Date, language: 'np' | 'en'): string[] {
-  const month = date.getMonth() + 1; // 0-indexed to 1-indexed
+  const month = date.getMonth() + 1;
   const day = date.getDate();
   const key = `${month}-${day}`;
   

@@ -203,15 +203,28 @@ export const getGregorianDate = (
   return resultDate;
 };
 
+// Improved Tithi calculation based on lunar phases
 export const getTithiFromBsDate = (bsYear: number, bsMonth: number, bsDay: number): number => {
-  // This is a simplified algorithm for Tithi calculation
-  // For more accurate calculations, we would need to implement full astronomical algorithms
-  // or use an API
+  // Convert BS date to Gregorian
+  const gregDate = getGregorianDate(bsYear, bsMonth, bsDay);
   
-  // Simple formula based on lunar cycle (approx 29.5 days)
-  // This won't be 100% accurate but provides a reasonable approximation
-  const dayOfLunarMonth = ((bsDay + bsMonth * 30) % 30) + 1;
-  return dayOfLunarMonth;
+  // Calculate approximate lunar phase (0-29)
+  // This formula uses the Gregorian date to estimate the lunar day
+  // Based on an average lunar month of 29.53 days
+  const lunarCycleLength = 29.53;
+  
+  // Reference new moon date (known new moon near our reference date)
+  const refNewMoon = new Date(2014, 0, 1); // Jan 1, 2014 (close to new moon)
+  
+  // Calculate days since reference new moon
+  const daysSinceRefNewMoon = (gregDate.getTime() - refNewMoon.getTime()) / (24 * 60 * 60 * 1000);
+  
+  // Calculate the tithi (1-30)
+  const tithiFloat = (daysSinceRefNewMoon % lunarCycleLength) / lunarCycleLength * 30;
+  const tithi = Math.floor(tithiFloat) + 1;
+  
+  // Ensure tithi is between 1 and 30
+  return tithi > 30 ? tithi - 30 : tithi;
 };
 
 // Lunar months in Nepali calendar for Tithi calculations

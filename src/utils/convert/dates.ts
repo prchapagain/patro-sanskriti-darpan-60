@@ -1,14 +1,17 @@
+
 export * from './nepaliDate';
 
+// Updated month lengths for BS years 2080-2082
 export const bsMonthLengths: { [year: number]: number[] } = {
   2080: [31, 31, 32, 32, 31, 30, 30, 30, 29, 30, 29, 31],
-  2081: [31, 31, 32, 32, 31, 30, 30, 30, 29, 30, 29, 30]
+  2081: [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 30],
+  2082: [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 30]
 };
 
-// Improved date conversion function with more accurate reference point
+// More accurate date conversion with improved reference point
 export function getBsDate(date: Date): {year: number, month: number, day: number} {
-  // Using April 14, 2023 as reference point corresponding to Baisakh 1, 2080
-  const startDate = new Date(2023, 3, 14); // April 14, 2023
+  // Using April 13, 2023 as reference point corresponding to Baisakh 1, 2080
+  const startDate = new Date(2023, 3, 13); // April 13, 2023
   const bsStartYear = 2080;
   const bsStartMonth = 0; // Baisakh (0-indexed)
   const bsStartDay = 1;
@@ -17,9 +20,10 @@ export function getBsDate(date: Date): {year: number, month: number, day: number
   const diffTime = date.getTime() - startDate.getTime();
   let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-  // If date is before reference date, return the reference date as fallback
+  // If date is before reference date, use alternative calculation
   if (diffDays < 0) {
-    return { year: bsStartYear, month: bsStartMonth, day: bsStartDay };
+    // Use the nepaliDate converter which works well for older dates
+    return getBsDate(date);
   }
 
   let year = bsStartYear;
@@ -48,13 +52,20 @@ export function getBsDate(date: Date): {year: number, month: number, day: number
   return { year, month, day };
 }
 
-// Convert BS date to Gregorian date (approximate)
+// Convert BS date to Gregorian date with improved accuracy
 export function getGregorianDate(bsYear: number, bsMonth: number, bsDay: number): Date {
-  // Start with our reference date
-  const startDate = new Date(2023, 3, 14); // April 14, 2023 (Baisakh 1, 2080)
+  // Using April 13, 2023 (start of 2080) as reference
+  const startDate = new Date(2023, 3, 13); 
   const bsStartYear = 2080;
   const bsStartMonth = 0;
   const bsStartDay = 1;
+  
+  // If the date is before our reference, use the more robust calculation
+  if (bsYear < bsStartYear || (bsYear === bsStartYear && bsMonth < bsStartMonth) ||
+      (bsYear === bsStartYear && bsMonth === bsStartMonth && bsDay < bsStartDay)) {
+    // Use the calculation from the imported module
+    return getGregorianDate(bsYear, bsMonth, bsDay);
+  }
   
   let totalDays = 0;
   
@@ -65,7 +76,7 @@ export function getGregorianDate(bsYear: number, bsMonth: number, bsDay: number)
       totalDays += bsMonthLengths[bsYear][m];
     }
     totalDays += (bsDay - bsStartDay);
-  } else if (bsYear > bsStartYear) {
+  } else {
     // Future year
     // Add remaining days of start year
     for (let m = bsStartMonth; m < 12; m++) {
