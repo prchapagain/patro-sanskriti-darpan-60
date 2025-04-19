@@ -61,7 +61,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
             className={cn(
               "relative min-h-[80px] p-1 border rounded-md transition-all duration-300",
               "hover:shadow-lg hover:scale-105 transform",
-              isToday ? "bg-amber-50 border-amber-300" : "",
+              isToday ? "bg-amber-50 border-amber-300 ring-2 ring-amber-300" : "", // Enhanced today highlight
               isHoliday ? "animate-pulse-slow bg-red-50/30" : "",
               isSaturday ? "bg-red-50/20" : "",
               isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-400",

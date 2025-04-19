@@ -5,7 +5,8 @@ import CalendarGrid from "@/components/CalendarGrid";
 import { cn } from "@/lib/utils";
 
 const Index = () => {
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  // Ensure date is set to the current system date (April 19, 2025)
+  const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
   const [language, setLanguage] = useState<'np' | 'en'>('np');
 
   const handlePrevMonth = () => {
@@ -27,6 +28,8 @@ const Index = () => {
   const toggleLanguage = () => {
     setLanguage(language === 'np' ? 'en' : 'np');
   };
+
+  console.log("Current date in Index:", currentDate);
 
   return (
     <div className={cn(

@@ -10,13 +10,17 @@ interface CalendarGridProps {
 }
 
 const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) => {
-  // Get current BS date
+  // Get current BS date for today
   const today = new Date();
   const todayBs = getBsDate(today);
   
   // Get current view month/year in BS
   const currentBs = getBsDate(currentDate);
   const { year: bsYear, month: bsMonth } = currentBs;
+  
+  console.log("Today's date:", today);
+  console.log("Today's BS date:", todayBs);
+  console.log("Current view BS date:", currentBs);
   
   // Days in the current BS month
   const daysInMonth = bsMonthLengths[bsYear]?.[bsMonth] || 30;
@@ -34,7 +38,10 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   // Generate day headers (Sun, Mon, etc.)
   bsDays.forEach((day, index) => {
     calendarCells.push(
-      <div key={`header-${index}`} className="text-center font-bold py-2">
+      <div key={`header-${index}`} className={cn(
+        "text-center font-bold py-2",
+        index === 6 ? "text-red-600" : "" // Saturday in red
+      )}>
         {language === 'np' ? day.np : day.en}
       </div>
     );
@@ -71,7 +78,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   
   // Current month days
   for (let day = 1; day <= daysInMonth; day++) {
-    // Create a date object for the current month
+    // Create a date object for the current month day
     const date = new Date(currentDate);
     date.setDate(date.getDate() - startDayIndex + day - 1);
     
