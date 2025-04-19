@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwind.css";
 
 export default {
@@ -74,6 +73,10 @@ export default {
                     orange: '#FF7043'
                 }
 			},
+			fontFamily: {
+                preeti: ['Noto Sans Devanagari', 'system-ui', 'sans-serif'],
+                mukta: ['Mukta Mahee', 'sans-serif']
+            },
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
@@ -119,12 +122,8 @@ export default {
                 'float': 'float 3s ease-in-out infinite',
                 'fade-in': 'fade-in 0.5s ease-out'
 			},
-            fontFamily: {
-                preeti: ['Preeti', 'sans-serif'],
-                mukta: ['Mukta Mahee', 'sans-serif']
-            }
+            
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
-
