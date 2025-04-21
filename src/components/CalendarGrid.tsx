@@ -17,22 +17,8 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   // Get number of BS days in month - this is the exact number of days we'll show
   const daysInMonth = getMonthLengths(bsYear)[bsMonth];
   
-  // Find which Gregorian day is BS 1
-  let firstDayOfBsMonth: Date | null = null;
-  for (let d = 0; d < 31; d++) {
-    const tryDate = new Date(currentDate);
-    tryDate.setDate(1 + d);
-    const bs = getBsDate(tryDate);
-    if (bs.year === bsYear && bs.month === bsMonth && bs.day === 1) {
-      firstDayOfBsMonth = tryDate;
-      break;
-    }
-  }
-  
-  if (!firstDayOfBsMonth) {
-    firstDayOfBsMonth = new Date(currentDate);
-    firstDayOfBsMonth.setDate(1);
-  }
+  // Get the Gregorian date for BS day 1 of the current month
+  const firstDayOfMonth = getGregorianDate(bsYear, bsMonth, 1);
   
   // Today for highlighting - Set April 21, 2025 as today if we're viewing that month
   const realToday = new Date();
@@ -65,25 +51,12 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     );
   });
   
-  // Current month days - render ONLY the actual days in the month, no previous/next month days
+  // Current month days - render ONLY the actual days in the month
   for (let day = 1; day <= daysInMonth; day++) {
-    // Find correct Date for this BS day
-    let gDate: Date | null = null;
-    for (let offset = -1; offset < 3; offset++) { // Include -1 to handle edge cases
-      const guess = new Date(firstDayOfBsMonth as Date);
-      guess.setDate((firstDayOfBsMonth as Date).getDate() + day - 1 + offset);
-      const bs = getBsDate(guess);
-      if (bs.year === bsYear && bs.month === bsMonth && bs.day === day) {
-        gDate = guess;
-        break;
-      }
-    }
+    // Get Gregorian date for this BS day using the direct conversion function
+    const gDate = getGregorianDate(bsYear, bsMonth, day);
     
-    if (!gDate) {
-      gDate = new Date(firstDayOfBsMonth as Date);
-      gDate.setDate((firstDayOfBsMonth as Date).getDate() + day - 1);
-    }
-    
+    // Check if today
     const isToday = todayBs.year === bsYear && todayBs.month === bsMonth && todayBs.day === day;
     
     calendarCells.push(
