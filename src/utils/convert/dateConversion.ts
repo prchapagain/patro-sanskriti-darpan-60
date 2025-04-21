@@ -77,8 +77,6 @@ export const getGregorianDate = (
   bsMonth: number,
   bsDay: number
 ): Date => {
-  // Convert to AD using a more accurate reference date
-  // Fixed reference: Jan 1, 2014 AD = Poush 17, 2070 BS
   try {
     // Calculate days difference from reference BS date
     const daysDifference = getTotalDaysFromBsDate(bsYear, bsMonth, bsDay);
@@ -86,12 +84,6 @@ export const getGregorianDate = (
     // Create new date by adding/subtracting days from reference English date
     const resultDate = new Date(referenceEnDate);
     resultDate.setDate(referenceEnDate.getDate() + daysDifference);
-    
-    // Log key dates for debugging
-    if ((bsYear === 2082 && bsMonth === 0) || (bsYear === 2080 && bsMonth === 0)) {
-      console.log(`Converting BS ${bsDay}/${bsMonth+1}/${bsYear} to AD: ${resultDate.toDateString()}, daysDiff: ${daysDifference}`);
-    }
-    
     return resultDate;
   } catch (error) {
     console.error(`Error converting BS date (${bsYear}-${bsMonth+1}-${bsDay}) to Gregorian:`, error);
