@@ -4,7 +4,7 @@ import CalendarHeader from "@/components/CalendarHeader";
 import CalendarGrid from "@/components/CalendarGrid";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { getBsDate } from "@/utils/dateUtils";
+import { getBsDate, getTithiFromBsDate, getTithiName } from "@/utils/dateUtils";
 import Panchanga from "@/components/Panchanga";
 
 const Index = () => {
@@ -34,7 +34,12 @@ const Index = () => {
 
   // Get today's BS date for Panchanga information
   const todayBs = getBsDate(currentDate);
-  const thithi = language === 'np' ? "प्रतिपदा" : "Pratipada";
+  
+  // Get correct tithi for today
+  const tithiNumber = getTithiFromBsDate(todayBs.year, todayBs.month, todayBs.day);
+  const thithi = getTithiName(tithiNumber, language);
+  
+  // Fixed values - would be calculated from proper functions in a full implementation
   const nakshatra = language === 'np' ? "अश्विनी" : "Ashwini";
   const yoga = language === 'np' ? "विष्कुम्भ" : "Vishkumbh";
   const karana = language === 'np' ? "बव" : "Bav";

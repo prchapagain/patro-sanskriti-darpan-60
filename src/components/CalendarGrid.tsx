@@ -20,29 +20,18 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   // Get the Gregorian date for BS day 1 of the current month
   const firstDayOfMonth = getGregorianDate(bsYear, bsMonth, 1);
   
-  // Log the first day of the month to verify day of week
+  // Calculate the day of week (0-6, Sunday-Saturday)
+  const firstDayIndex = firstDayOfMonth.getDay();
+  
   console.log(`First day of ${bsMonth+1}/${bsYear} BS is:`, 
     firstDayOfMonth.toDateString(), 
-    `Day of week: ${firstDayOfMonth.getDay()}`
+    `Day of week: ${firstDayIndex}`
   );
   
-  // Today for highlighting - Set April 21, 2025 as today if we're viewing that month
+  // Today for highlighting 
   const realToday = new Date();
-  
-  // Special case for April 21, 2025 (8 Baishakh 2082)
-  const isShowingBaishakh2082 = bsYear === 2082 && bsMonth === 0;
-  let todayBs = getBsDate(realToday);
-  
-  if (isShowingBaishakh2082) {
-    // If we're viewing Baishakh 2082, set today as 8 Baishakh (April 21, 2025)
-    const april21_2025 = new Date(2025, 3, 21);
-    april21_2025.setHours(0, 0, 0, 0);
-    realToday.setTime(april21_2025.getTime());
-    todayBs = { year: 2082, month: 0, day: 8 };
-  } else {
-    realToday.setHours(0, 0, 0, 0);
-    todayBs = getBsDate(realToday);
-  }
+  realToday.setHours(0, 0, 0, 0);
+  const todayBs = getBsDate(realToday);
 
   // Render day names
   const calendarCells: React.ReactNode[] = [];
@@ -62,7 +51,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     // Get Gregorian date for this BS day using the direct conversion function
     const gDate = getGregorianDate(bsYear, bsMonth, day);
     
-    // Log every 7th day for debugging
+    // Log key dates for debugging
     if (day % 7 === 0 || day === 1 || day === 15) {
       console.log(`BS date ${day}/${bsMonth+1}/${bsYear} = AD date: ${gDate.toDateString()}, Day of week: ${gDate.getDay()}`);
     }
