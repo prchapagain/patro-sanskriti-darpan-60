@@ -14,11 +14,25 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   const currentBs = getBsDate(currentDate);
   const { year: bsYear, month: bsMonth } = currentBs;
   
-  // Get number of BS days in month - this is the exact number of days we'll show
+  // Get number of BS days in month
   const daysInMonth = getMonthLengths(bsYear)[bsMonth];
   
-  // Get the Gregorian date for BS day 1 of the current month
-  const firstDayOfMonth = getGregorianDate(bsYear, bsMonth, 1);
+  // Find which Gregorian day is BS 1
+  let firstDayOfBsMonth: Date | null = null;
+  for (let d = 0; d < 31; d++) {
+    const tryDate = new Date(currentDate);
+    tryDate.setDate(1 + d);
+    const bs = getBsDate(tryDate);
+    if (bs.year === bsYear && bs.month === bsMonth && bs.day === 1) {
+      firstDayOfBsMonth = tryDate;
+      break;
+    }
+  }
+  
+  if (!firstDayOfBsMonth) {
+    firstDayOfBsMonth = new Date(currentDate);
+    firstDayOfBsMonth.setDate(1);
+  }
   
   // Today for highlighting - Set April 21, 2025 as today if we're viewing that month
   const realToday = new Date();
@@ -51,12 +65,25 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     );
   });
   
-  // Current month days - render ONLY the actual days in the month
+  // Current month days only - exactly the number of days in the month
   for (let day = 1; day <= daysInMonth; day++) {
-    // Get Gregorian date for this BS day using the direct conversion function
-    const gDate = getGregorianDate(bsYear, bsMonth, day);
+    // Find correct Date for this BS day
+    let gDate: Date | null = null;
+    for (let offset = -1; offset < 3; offset++) { // Include -1 to handle edge cases
+      const guess = new Date(firstDayOfBsMonth as Date);
+      guess.setDate((firstDayOfBsMonth as Date).getDate() + day - 1 + offset);
+      const bs = getBsDate(guess);
+      if (bs.year === bsYear && bs.month === bsMonth && bs.day === day) {
+        gDate = guess;
+        break;
+      }
+    }
     
-    // Check if today
+    if (!gDate) {
+      gDate = new Date(firstDayOfBsMonth as Date);
+      gDate.setDate((firstDayOfBsMonth as Date).getDate() + day - 1);
+    }
+    
     const isToday = todayBs.year === bsYear && todayBs.month === bsMonth && todayBs.day === day;
     
     calendarCells.push(
@@ -76,7 +103,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
 
   return (
     <div className={cn(
-      "grid grid-cols-7 auto-rows-max gap-px md:gap-1 px-1 pb-1 md:p-4",
+      "grid grid-cols-7 auto-rows-fr gap-px md:gap-1 px-1 pb-1 md:p-4",
       "bg-gradient-to-br from-white to-gray-50 dark:from-gray-950 dark:to-gray-900",
       "rounded-b-lg shadow-md"
     )}>
