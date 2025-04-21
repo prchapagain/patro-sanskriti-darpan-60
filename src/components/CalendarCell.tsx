@@ -17,6 +17,37 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+// Helper to format both BS and AD side by side, large
+function BigDateView({ bsDay, adDay, language, isToday, isHoliday, isSaturday }: {
+  bsDay: number,
+  adDay: number,
+  language: 'np' | 'en',
+  isToday: boolean,
+  isHoliday: boolean,
+  isSaturday: boolean
+}) {
+  return (
+    <div className="flex flex-col items-center w-full">
+      <span className={cn(
+        "leading-none font-bold tracking-tight",
+        "text-4xl md:text-5xl lg:text-5xl",
+        language === "np" ? "font-noto" : "font-mukta",
+        isToday ? "text-yellow-600 dark:text-yellow-200 drop-shadow-lg" : "",
+        isHoliday ? "text-red-600 dark:text-red-300" : "",
+        isSaturday ? "text-red-500 dark:text-red-300" : "text-gray-800 dark:text-gray-100"
+      )}>
+        {language === "np" ? toNepaliDigits(bsDay) : bsDay}
+      </span>
+      <span className={cn(
+        "text-xs font-medium mt-1",
+        isHoliday || isSaturday ? "text-red-400 dark:text-red-300" : "text-gray-500 dark:text-gray-300"
+      )}>
+        {language === "np" ? toNepaliDigits(adDay) : adDay}
+      </span>
+    </div>
+  )
+}
+
 interface CalendarCellProps {
   bsDay: number;
   bsMonth: number;
@@ -46,10 +77,8 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
 
   const isHoliday = festivalNames.length > 0;
 
-  // BS/AD date representation
-  const bsDisplay = language === 'np' ? toNepaliDigits(bsDay) : bsDay;
-  const gregDay = gregorianDate.getDate();
-  const adDisplay = language === 'np' ? toNepaliDigits(gregDay) : gregDay;
+  // Gregorian date always shown (AD)
+  const adDisplay = gregorianDate.getDate();
 
   return (
     <TooltipProvider>
@@ -57,41 +86,31 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
         <TooltipTrigger asChild>
           <div
             className={cn(
-              "relative min-h-[90px] p-1 border rounded-md transition-all duration-300 cursor-pointer",
-              "hover:shadow-lg hover:scale-105 transform",
-              isToday ? "bg-amber-50 border-amber-300 ring-2 ring-amber-300 dark:bg-yellow-900/40" : "",
-              isHoliday ? "animate-pulse-slow bg-red-50/30 dark:bg-red-900/20" : "",
-              isSaturday ? "bg-red-50/30 border-red-300 dark:bg-red-900/10" : "",
-              isCurrentMonth ? "bg-white dark:bg-gray-950" : "bg-gray-50/60 text-gray-400 dark:bg-gray-800/40",
-              "flex flex-col items-center justify-start"
+              "relative min-h-[96px] p-[6px] md:p-2 border rounded-lg md:rounded-xl transition-all duration-200 cursor-pointer select-none",
+              "hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] transform-gpu",
+              isToday ? "bg-yellow-50 border-yellow-200 ring-2 ring-yellow-300 dark:bg-yellow-950/40" : "",
+              isHoliday ? "bg-red-50/50 border-red-200 animate-pulse-slow dark:bg-red-900/20" : "",
+              isSaturday ? "bg-red-50 border-red-200 dark:bg-red-900/10" : "",
+              isCurrentMonth ? "bg-white dark:bg-gray-950" : "bg-gray-50/40 text-gray-400 dark:bg-gray-800/40",
+              "flex flex-col items-center justify-between"
             )}
           >
-            {/* Date numbers row */}
-            <div className="flex flex-col w-full items-center mt-1 mb-1">
-              <span className={cn(
-                "font-bold leading-6 text-center",
-                "text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl",
-                language === 'np' ? "font-noto" : "font-mukta",
-                isToday ? "text-amber-600 dark:text-yellow-200 shadow-sm" : "",
-                isHoliday ? "text-red-600 dark:text-red-300" : "",
-                isSaturday ? "text-red-600 dark:text-red-300" : ""
-              )}>
-                {bsDisplay}
-              </span>
-              <span className={cn(
-                "text-xs md:text-sm leading-3 mt-0.5",
-                isHoliday || isSaturday ? "text-red-500 dark:text-red-400" : "text-gray-400 dark:text-gray-300"
-              )}>{adDisplay}</span>
-            </div>
-            {/* Festival / International / Tithi Notes */}
-            <div className="flex flex-col gap-0.5 w-full items-center mb-1">
+            <BigDateView
+              bsDay={bsDay}
+              adDay={adDisplay}
+              language={language}
+              isToday={isToday}
+              isHoliday={isHoliday}
+              isSaturday={isSaturday}
+            />
+            {/* Festival / International / Tithi */}
+            <div className="flex flex-col gap-1 w-full items-center mb-0.5 mt-1">
               {festivalNames.map((name, index) => (
                 <div key={`festival-${index}`} className={cn(
-                  "text-[11px] truncate font-semibold px-1 rounded",
-                  "text-red-600 dark:text-red-300 bg-red-50/60 dark:bg-red-900/30 animate-fade-in-slow",
-                  language === 'np' ? "font-noto" : ""
+                  "text-[11px] truncate font-semibold px-1 rounded leading-tight",
+                  "text-red-600 dark:text-red-300 bg-red-50/70 dark:bg-red-900/30 animate-fade-in-slow"
                 )}>
-                  <span className="inline-flex items-center">
+                  <span className="inline-flex items-center gap-x-1">
                     <Calendar className="h-3 w-3 mr-0.5" />
                     {name}
                   </span>
@@ -99,10 +118,9 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               ))}
               {internationalDays.map((name, index) => (
                 <div key={`international-${index}`} className={cn(
-                  "text-[10px] truncate text-nepali-turquoise animate-fade-in-slow",
-                  language === 'np' ? "font-noto" : ""
+                  "text-[10px] truncate text-nepali-turquoise animate-fade-in-slow"
                 )}>
-                  <span className="inline-flex items-center">
+                  <span className="inline-flex items-center gap-x-1">
                     <Globe className="h-3 w-3 mr-0.5" />
                     {name}
                   </span>
@@ -110,10 +128,9 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               ))}
               {thithi && (
                 <div className={cn(
-                  "text-[10px] truncate text-nepali-purple animate-fade-in-slow",
-                  language === 'np' ? "font-noto" : ""
+                  "text-[10px] truncate text-nepali-purple animate-fade-in-slow"
                 )}>
-                  <span className="inline-flex items-center">
+                  <span className="inline-flex items-center gap-x-1">
                     <Moon className="h-3 w-3 mr-0.5" />
                     {thithi}
                   </span>
@@ -127,7 +144,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
           "animate-in fade-in-0 zoom-in-95 dark:bg-gray-900"
         )}>
           <div className={cn(
-            "text-sm",
+            "text-xs",
             language === 'np' ? "font-noto" : ""
           )}>
             {isSaturday && (
@@ -139,9 +156,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               <div key={`tooltip-festival-${index}`} className={cn(
                 "font-medium",
                 isHoliday ? "text-red-600 dark:text-red-300" : "text-nepali-red"
-              )}>
-                {name}
-              </div>
+              )}>{name}</div>
             ))}
             {internationalDays.map((name, index) => (
               <div key={`tooltip-international-${index}`} className="font-medium text-nepali-turquoise">{name}</div>
