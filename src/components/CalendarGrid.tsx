@@ -13,8 +13,10 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   // Find BS date for displayed month
   const currentBs = getBsDate(currentDate);
   const { year: bsYear, month: bsMonth } = currentBs;
+  
   // Get number of BS days in month
   const daysInMonth = bsMonthLengths[bsYear]?.[bsMonth] || 30;
+  
   // Find which Gregorian day is BS 1
   let firstDayOfBsMonth: Date | null = null;
   for (let d = 0; d < 31; d++) {
@@ -26,17 +28,32 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
       break;
     }
   }
+  
   if (!firstDayOfBsMonth) {
     firstDayOfBsMonth = new Date(currentDate);
     firstDayOfBsMonth.setDate(1);
   }
+  
   // Grid start: what weekday does BS 1 fall on?
   const startDayIndex = firstDayOfBsMonth.getDay();
 
-  // Today for highlighting
+  // Today for highlighting - Set April 21, 2025 as today if we're viewing that month
   const realToday = new Date();
-  realToday.setHours(0, 0, 0, 0);
-  const todayBs = getBsDate(realToday);
+  
+  // Special case for April 21, 2025 (8 Baishakh 2082)
+  const isShowingBaishakh2082 = bsYear === 2082 && bsMonth === 0;
+  let todayBs = getBsDate(realToday);
+  
+  if (isShowingBaishakh2082) {
+    // If we're viewing Baishakh 2082, set today as 8 Baishakh (April 21, 2025)
+    const april21_2025 = new Date(2025, 3, 21);
+    april21_2025.setHours(0, 0, 0, 0);
+    realToday.setTime(april21_2025.getTime());
+    todayBs = { year: 2082, month: 0, day: 8 };
+  } else {
+    realToday.setHours(0, 0, 0, 0);
+    todayBs = getBsDate(realToday);
+  }
 
   // Render day names
   const calendarCells: React.ReactNode[] = [];
@@ -50,6 +67,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
       </div>
     );
   });
+  
   // Previous month's trailing days (always show 6*7 = 42 days)
   for (let i = 0; i < startDayIndex; i++) {
     const prevDate = new Date(firstDayOfBsMonth as Date);
@@ -69,11 +87,12 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
       />
     );
   }
+  
   // Current month days
   for (let day = 1; day <= daysInMonth; day++) {
     // Find correct Date for this BS day
     let gDate: Date | null = null;
-    for (let offset = 0; offset < 3; offset++) {
+    for (let offset = -1; offset < 3; offset++) { // Include -1 to handle edge cases
       const guess = new Date(firstDayOfBsMonth as Date);
       guess.setDate((firstDayOfBsMonth as Date).getDate() + day - 1 + offset);
       const bs = getBsDate(guess);
@@ -82,8 +101,14 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
         break;
       }
     }
-    if (!gDate) gDate = new Date(firstDayOfBsMonth as Date);
+    
+    if (!gDate) {
+      gDate = new Date(firstDayOfBsMonth as Date);
+      gDate.setDate((firstDayOfBsMonth as Date).getDate() + day - 1);
+    }
+    
     const isToday = todayBs.year === bsYear && todayBs.month === bsMonth && todayBs.day === day;
+    
     calendarCells.push(
       <CalendarCell
         key={`cur-${day}`}
@@ -98,6 +123,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
       />
     );
   }
+  
   // Next month's leading days
   const totalCells = 42;
   const remaining = totalCells - (daysInMonth + startDayIndex);

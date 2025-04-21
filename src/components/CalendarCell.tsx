@@ -32,7 +32,7 @@ function BigDateView({ bsDay, adDay, language, isToday, isHoliday, isSaturday }:
         "leading-none font-bold tracking-tight",
         "text-4xl md:text-5xl lg:text-5xl",
         language === "np" ? "font-noto" : "font-mukta",
-        isToday ? "text-yellow-600 dark:text-yellow-200 drop-shadow-lg" : "",
+        isToday ? "text-yellow-600 dark:text-yellow-200 ring-4 ring-yellow-300/50 dark:ring-yellow-400/30 p-1 rounded-full" : "",
         isHoliday ? "text-red-600 dark:text-red-300" : "",
         isSaturday ? "text-red-500 dark:text-red-300" : "text-gray-800 dark:text-gray-100"
       )}>
@@ -88,8 +88,8 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
             className={cn(
               "relative min-h-[96px] p-[6px] md:p-2 border rounded-lg md:rounded-xl transition-all duration-200 cursor-pointer select-none",
               "hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] transform-gpu",
-              isToday ? "bg-yellow-50 border-yellow-200 ring-2 ring-yellow-300 dark:bg-yellow-950/40" : "",
-              isHoliday ? "bg-red-50/50 border-red-200 animate-pulse-slow dark:bg-red-900/20" : "",
+              isToday ? "bg-yellow-50 border-yellow-200 shadow-lg shadow-yellow-200/20 dark:bg-yellow-950/40 dark:shadow-yellow-900/10" : "",
+              isHoliday ? "bg-red-50/50 border-red-200 dark:bg-red-900/20" : "",
               isSaturday ? "bg-red-50 border-red-200 dark:bg-red-900/10" : "",
               isCurrentMonth ? "bg-white dark:bg-gray-950" : "bg-gray-50/40 text-gray-400 dark:bg-gray-800/40",
               "flex flex-col items-center justify-between"
@@ -108,7 +108,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               {festivalNames.map((name, index) => (
                 <div key={`festival-${index}`} className={cn(
                   "text-[11px] truncate font-semibold px-1 rounded leading-tight",
-                  "text-red-600 dark:text-red-300 bg-red-50/70 dark:bg-red-900/30 animate-fade-in-slow"
+                  "text-red-600 dark:text-red-300 bg-red-50/70 dark:bg-red-900/30"
                 )}>
                   <span className="inline-flex items-center gap-x-1">
                     <Calendar className="h-3 w-3 mr-0.5" />
@@ -118,7 +118,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               ))}
               {internationalDays.map((name, index) => (
                 <div key={`international-${index}`} className={cn(
-                  "text-[10px] truncate text-nepali-turquoise animate-fade-in-slow"
+                  "text-[10px] truncate text-nepali-turquoise"
                 )}>
                   <span className="inline-flex items-center gap-x-1">
                     <Globe className="h-3 w-3 mr-0.5" />
@@ -128,7 +128,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               ))}
               {thithi && (
                 <div className={cn(
-                  "text-[10px] truncate text-nepali-purple animate-fade-in-slow"
+                  "text-[10px] truncate text-nepali-purple"
                 )}>
                   <span className="inline-flex items-center gap-x-1">
                     <Moon className="h-3 w-3 mr-0.5" />

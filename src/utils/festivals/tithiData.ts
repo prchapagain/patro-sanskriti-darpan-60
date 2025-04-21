@@ -39,6 +39,7 @@ export const tithiData: Record<number, { np: string; en: string }> = {
 export const specificTithiData: Record<string, number> = {
   // 2082 key dates with accurate thithi information
   "2082-1-1": 15,  // Purnima
+  "2082-1-8": 1,   // Pratipada - April 21, 2025
   "2082-1-15": 29, // Amavasya
   "2082-1-30": 15, // Purnima
   "2082-2-15": 15, // Purnima

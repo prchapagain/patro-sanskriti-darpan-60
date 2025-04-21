@@ -73,7 +73,7 @@
     @apply bg-gradient-to-r from-nepali-purple/90 to-nepali-deepRed/90 text-white dark:from-gray-900 dark:to-gray-800;
   }
   .calendar-container {
-    @apply glass-morphism dark:neo-blur;
+    @apply glass-morphism dark:bg-gray-900/80 dark:backdrop-blur-lg dark:border-gray-800;
   }
   .glass-morphism {
     @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border border-white/10 dark:border-gray-800 rounded-xl;
