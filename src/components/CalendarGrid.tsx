@@ -20,6 +20,12 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   // Get the Gregorian date for BS day 1 of the current month
   const firstDayOfMonth = getGregorianDate(bsYear, bsMonth, 1);
   
+  // Log the first day of the month to verify day of week
+  console.log(`First day of ${bsMonth+1}/${bsYear} BS is:`, 
+    firstDayOfMonth.toDateString(), 
+    `Day of week: ${firstDayOfMonth.getDay()}`
+  );
+  
   // Today for highlighting - Set April 21, 2025 as today if we're viewing that month
   const realToday = new Date();
   
@@ -55,6 +61,11 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   for (let day = 1; day <= daysInMonth; day++) {
     // Get Gregorian date for this BS day using the direct conversion function
     const gDate = getGregorianDate(bsYear, bsMonth, day);
+    
+    // Log every 7th day for debugging
+    if (day % 7 === 0 || day === 1 || day === 15) {
+      console.log(`BS date ${day}/${bsMonth+1}/${bsYear} = AD date: ${gDate.toDateString()}, Day of week: ${gDate.getDay()}`);
+    }
     
     // Check if today
     const isToday = todayBs.year === bsYear && todayBs.month === bsMonth && todayBs.day === day;

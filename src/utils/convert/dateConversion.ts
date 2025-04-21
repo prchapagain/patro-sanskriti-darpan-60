@@ -84,6 +84,13 @@ export const getGregorianDate = (
     // Create new date by adding/subtracting days from reference English date
     const resultDate = new Date(referenceEnDate);
     resultDate.setDate(referenceEnDate.getDate() + daysDifference);
+    
+    // Log some key dates for debug
+    if ((bsYear === 2082 && bsMonth === 0 && (bsDay === 1 || bsDay === 15)) || 
+        (bsYear === 2082 && bsMonth === 0 && bsDay === 2)) {
+      console.log(`Converting BS ${bsDay}/${bsMonth+1}/${bsYear} to AD: ${resultDate.toDateString()}, daysDiff: ${daysDifference}`);
+    }
+    
     return resultDate;
   } catch (error) {
     console.error(`Error converting BS date (${bsYear}-${bsMonth+1}-${bsDay}) to Gregorian:`, error);
