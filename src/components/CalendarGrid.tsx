@@ -34,9 +34,6 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     firstDayOfBsMonth.setDate(1);
   }
   
-  // Grid start: what weekday does BS 1 fall on?
-  const startDayIndex = firstDayOfBsMonth.getDay();
-
   // Today for highlighting - Set April 21, 2025 as today if we're viewing that month
   const realToday = new Date();
   
@@ -68,27 +65,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     );
   });
   
-  // Previous month's trailing days (to fill start of grid)
-  for (let i = 0; i < startDayIndex; i++) {
-    const prevDate = new Date(firstDayOfBsMonth as Date);
-    prevDate.setDate(prevDate.getDate() - (startDayIndex - i));
-    const prevBs = getBsDate(prevDate);
-    calendarCells.push(
-      <CalendarCell
-        key={`before-${i}`}
-        bsDay={prevBs.day}
-        bsMonth={prevBs.month}
-        bsYear={prevBs.year}
-        gregorianDate={prevDate}
-        isToday={false}
-        language={language}
-        isCurrentMonth={false}
-        isSaturday={prevDate.getDay() === 6}
-      />
-    );
-  }
-  
-  // Current month days - ensuring we only render the exact number of days in the month
+  // Current month days only - exactly the number of days in the month
   for (let day = 1; day <= daysInMonth; day++) {
     // Find correct Date for this BS day
     let gDate: Date | null = null;
@@ -123,34 +100,10 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
       />
     );
   }
-  
-  // Next month's leading days (to fill remainder of 6*7 grid)
-  const totalCells = 42; // Standard calendar grid: 6 weeks × 7 days
-  const cellsUsedSoFar = startDayIndex + daysInMonth;
-  const remaining = totalCells - cellsUsedSoFar;
-  
-  for (let day = 1; day <= remaining; day++) {
-    const nd = new Date(firstDayOfBsMonth as Date);
-    nd.setDate((firstDayOfBsMonth as Date).getDate() + daysInMonth + day - 1);
-    const nextBs = getBsDate(nd);
-    calendarCells.push(
-      <CalendarCell
-        key={`after-${day}`}
-        bsDay={nextBs.day}
-        bsMonth={nextBs.month}
-        bsYear={nextBs.year}
-        gregorianDate={nd}
-        isToday={false}
-        language={language}
-        isCurrentMonth={false}
-        isSaturday={nd.getDay() === 6}
-      />
-    );
-  }
 
   return (
     <div className={cn(
-      "grid grid-cols-7 gap-px md:gap-1 px-1 pb-1 md:p-4",
+      "grid grid-cols-7 auto-rows-fr gap-px md:gap-1 px-1 pb-1 md:p-4",
       "bg-gradient-to-br from-white to-gray-50 dark:from-gray-950 dark:to-gray-900",
       "rounded-b-lg shadow-md"
     )}>
