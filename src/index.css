@@ -73,7 +73,7 @@
     @apply bg-gradient-to-r from-nepali-purple/90 to-nepali-deepRed/90 text-white dark:from-gray-900 dark:to-gray-800;
   }
   .calendar-container {
-    @apply glass-morphism;
+    @apply glass-morphism dark:bg-gray-900/80 dark:backdrop-blur-lg dark:border-gray-800;
   }
   .glass-morphism {
     @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border border-white/10 dark:border-gray-800 rounded-xl;
@@ -83,21 +83,10 @@
     background-repeat: repeat;
     background-size: 104px 52px;
   }
-  .today-highlight {
-    @apply ring-4 ring-yellow-300/50 dark:ring-yellow-400/30 bg-yellow-50 border-yellow-200 dark:bg-yellow-950/40 dark:shadow-yellow-900/10;
-  }
 }
 
 @layer utilities {
   .neo-blur {
     @apply backdrop-blur-2xl bg-black/40 border border-white/10;
-  }
-  .no-animation {
-    animation: none !important;
-    transition: none !important;
-  }
-  .static-element {
-    transform: none !important;
-    transition: none !important;
   }
 }

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Calendar, Moon, Globe } from "lucide-react";
@@ -79,11 +80,6 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
   // Gregorian date always shown (AD)
   const adDisplay = gregorianDate.getDate();
 
-  // Determine if today is "special today" (8 Baishakh 2082)
-  const isSpecialToday =
-    bsYear === 2082 && bsMonth === 0 && bsDay === 8;
-
-  // Remove animation/hover for today cell
   return (
     <TooltipProvider>
       <Tooltip>
@@ -91,13 +87,8 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
           <div
             className={cn(
               "relative min-h-[96px] p-[6px] md:p-2 border rounded-lg md:rounded-xl transition-all duration-200 cursor-pointer select-none",
-              // Remove animation for today, but keep hover/active for others
-              isToday && isSpecialToday
-                ? "ring-4 ring-yellow-300/50 dark:ring-yellow-400/30 pointer-events-none bg-yellow-50 border-yellow-200 dark:bg-yellow-950/40 dark:shadow-yellow-900/10"
-                : "hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] transform-gpu",
-              isToday && !isSpecialToday
-                ? "bg-yellow-50 border-yellow-200 shadow-lg shadow-yellow-200/20 dark:bg-yellow-950/40 dark:shadow-yellow-900/10"
-                : "",
+              "hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] transform-gpu",
+              isToday ? "bg-yellow-50 border-yellow-200 shadow-lg shadow-yellow-200/20 dark:bg-yellow-950/40 dark:shadow-yellow-900/10" : "",
               isHoliday ? "bg-red-50/50 border-red-200 dark:bg-red-900/20" : "",
               isSaturday ? "bg-red-50 border-red-200 dark:bg-red-900/10" : "",
               isCurrentMonth ? "bg-white dark:bg-gray-950" : "bg-gray-50/40 text-gray-400 dark:bg-gray-800/40",
@@ -113,7 +104,6 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               isSaturday={isSaturday}
             />
             {/* Festival / International / Tithi */}
-            {/* For 8 Baishakh 2082, show custom tithi, hide animation */}
             <div className="flex flex-col gap-1 w-full items-center mb-0.5 mt-1">
               {festivalNames.map((name, index) => (
                 <div key={`festival-${index}`} className={cn(
@@ -136,17 +126,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
                   </span>
                 </div>
               ))}
-              {/* Special tithi for today */}
-              {isSpecialToday ? (
-                <div className="text-[10px] truncate text-nepali-purple">
-                  <span className="inline-flex items-center gap-x-1">
-                    <Moon className="h-3 w-3 mr-0.5" />
-                    {language === "np"
-                      ? "वैशाख शुक्ल प्रतिपदा"
-                      : "Baishakh Shukla Pratipada"}
-                  </span>
-                </div>
-              ) : thithi && (
+              {thithi && (
                 <div className={cn(
                   "text-[10px] truncate text-nepali-purple"
                 )}>

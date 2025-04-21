@@ -1,8 +1,8 @@
+
 import React from "react";
 import CalendarCell from "./CalendarCell";
 import { bsDays, bsMonthLengths, getBsDate, getGregorianDate } from "@/utils/dateUtils";
 import { cn } from "@/lib/utils";
-import PanchangaToday from "./PanchangaToday";
 
 interface CalendarGridProps {
   currentDate: Date;
@@ -147,18 +147,12 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   }
 
   return (
-    <div>
-      {/* Only show Panchanga for ८ वैशाख २०८२ (Baishakh 2082), today = ८ */}
-      {(bsYear === 2082 && bsMonth === 0) && (
-        <PanchangaToday language={language} />
-      )}
-      <div className={cn(
-        "grid grid-cols-7 gap-px md:gap-1 px-1 pb-1 md:p-4",
-        "bg-gradient-to-br from-white to-gray-50 dark:from-gray-950 dark:to-gray-900",
-        "rounded-b-lg shadow-md"
-      )}>
-        {calendarCells}
-      </div>
+    <div className={cn(
+      "grid grid-cols-7 gap-px md:gap-1 px-1 pb-1 md:p-4",
+      "bg-gradient-to-br from-white to-gray-50 dark:from-gray-950 dark:to-gray-900",
+      "rounded-b-lg shadow-md"
+    )}>
+      {calendarCells}
     </div>
   );
 };
