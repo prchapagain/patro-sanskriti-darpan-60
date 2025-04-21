@@ -4,6 +4,8 @@ import CalendarHeader from "@/components/CalendarHeader";
 import CalendarGrid from "@/components/CalendarGrid";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { getBsDate } from "@/utils/dateUtils";
+import Panchanga from "@/components/Panchanga";
 
 const Index = () => {
   const [currentDate, setCurrentDate] = useState<Date>(() => {
@@ -29,6 +31,14 @@ const Index = () => {
     setCurrentDate(today);
   };
   const toggleLanguage = () => setLanguage(language === 'np' ? 'en' : 'np');
+
+  // Get today's BS date for Panchanga information
+  const todayBs = getBsDate(currentDate);
+  const thithi = language === 'np' ? "प्रतिपदा" : "Pratipada";
+  const nakshatra = language === 'np' ? "अश्विनी" : "Ashwini";
+  const yoga = language === 'np' ? "विष्कुम्भ" : "Vishkumbh";
+  const karana = language === 'np' ? "बव" : "Bav";
+  const vaar = language === 'np' ? "सोमबार" : "Monday";
 
   return (
     <ThemeProvider>
@@ -62,6 +72,25 @@ const Index = () => {
               language={language}
               onLanguageToggle={toggleLanguage}
             />
+            
+            {/* Panchanga Section - Added between header and grid */}
+            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm px-4 py-3 border-b border-gray-200 dark:border-gray-800">
+              <h3 className={cn(
+                "text-lg font-medium mb-2 text-center text-gray-700 dark:text-gray-300",
+                language === 'np' ? "font-noto" : "font-mukta"
+              )}>
+                {language === 'np' ? "पञ्चाङ्ग" : "Panchanga"}
+              </h3>
+              <Panchanga 
+                thithi={thithi}
+                nakshatra={nakshatra}
+                yoga={yoga}
+                karana={karana}
+                vaar={vaar}
+                language={language}
+              />
+            </div>
+            
             <CalendarGrid
               currentDate={currentDate}
               language={language}

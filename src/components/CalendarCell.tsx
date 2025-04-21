@@ -16,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Panchanga from "./Panchanga";
 
 // Helper to format both BS and AD side by side, large
 function BigDateView({ bsDay, adDay, language, isToday, isHoliday, isSaturday }: {
@@ -103,7 +104,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
               isHoliday={isHoliday}
               isSaturday={isSaturday}
             />
-            {/* Festival / International / Tithi */}
+            {/* Festival / International Days */}
             <div className="flex flex-col gap-1 w-full items-center mb-0.5 mt-1">
               {festivalNames.map((name, index) => (
                 <div key={`festival-${index}`} className={cn(

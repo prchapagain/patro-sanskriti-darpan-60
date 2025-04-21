@@ -31,7 +31,6 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   // Format Gregorian date
   const gregYear = currentDate.getFullYear();
   const gregMonth = currentDate.getMonth();
-  const gregDate = currentDate.getDate();
 
   // Month names in English
   const englishMonths = [
