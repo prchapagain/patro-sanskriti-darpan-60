@@ -9,6 +9,7 @@ import {
   toNepaliDigits,
   getInternationalDays
 } from "@/utils/dateUtils";
+
 import {
   Tooltip,
   TooltipContent,
@@ -37,90 +38,76 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
   isCurrentMonth,
   isSaturday
 }) => {
-  const hasFest = hasFestival(bsYear, bsMonth, bsDay);
-  const festivalNames = hasFest ? getFestivalName(bsYear, bsMonth, bsDay, language) : [];
+  const festivalNames = hasFestival(bsYear, bsMonth, bsDay)
+    ? getFestivalName(bsYear, bsMonth, bsDay, language)
+    : [];
   const thithi = getThithi(bsYear, bsMonth, bsDay, language);
   const internationalDays = getInternationalDays(gregorianDate, language);
 
-  // Check if this day is a holiday/leave (बिदा)
   const isHoliday = festivalNames.length > 0;
-  
-  const displayDay = isToday 
-    ? (language === 'np' ? "आज" : "Today") 
-    : (language === 'np' ? toNepaliDigits(bsDay) : bsDay.toString());
-  
+
+  // BS/AD date representation
+  const bsDisplay = language === 'np' ? toNepaliDigits(bsDay) : bsDay;
   const gregDay = gregorianDate.getDate();
-  const displayGregDay = language === 'np' ? toNepaliDigits(gregDay) : gregDay.toString();
+  const adDisplay = language === 'np' ? toNepaliDigits(gregDay) : gregDay;
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div 
+          <div
             className={cn(
-              "relative min-h-[80px] p-1 border rounded-md transition-all duration-300",
+              "relative min-h-[90px] p-1 border rounded-md transition-all duration-300 cursor-pointer",
               "hover:shadow-lg hover:scale-105 transform",
-              isToday ? "bg-amber-50 border-amber-300 ring-2 ring-amber-300" : "", // Enhanced today highlight
-              isHoliday ? "animate-pulse-slow bg-red-50/30" : "",
-              isSaturday ? "bg-red-50/20 border-red-200" : "", // Saturday highlight
-              isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-400",
-              "flex flex-col"
+              isToday ? "bg-amber-50 border-amber-300 ring-2 ring-amber-300 dark:bg-yellow-900/40" : "",
+              isHoliday ? "animate-pulse-slow bg-red-50/30 dark:bg-red-900/20" : "",
+              isSaturday ? "bg-red-50/30 border-red-300 dark:bg-red-900/10" : "",
+              isCurrentMonth ? "bg-white dark:bg-gray-950" : "bg-gray-50/60 text-gray-400 dark:bg-gray-800/40",
+              "flex flex-col items-center justify-start"
             )}
           >
-            <div className={cn(
-              "flex justify-between text-xs",
-              (isHoliday || isSaturday) && "text-red-600 font-bold"
-            )}>
+            {/* Date numbers row */}
+            <div className="flex flex-col w-full items-center mt-1 mb-1">
               <span className={cn(
-                "font-bold", 
-                isToday ? "text-amber-500" : "",
-                (isHoliday || isSaturday) ? "text-red-600" : "",
-                language === 'np' ? "font-noto" : ""
+                "font-bold leading-6 text-center",
+                "text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl",
+                language === 'np' ? "font-noto" : "font-mukta",
+                isToday ? "text-amber-600 dark:text-yellow-200 shadow-sm" : "",
+                isHoliday ? "text-red-600 dark:text-red-300" : "",
+                isSaturday ? "text-red-600 dark:text-red-300" : ""
               )}>
-                {displayDay}
+                {bsDisplay}
               </span>
-              <span className={(isHoliday || isSaturday) ? "text-red-400" : "text-gray-500"}>
-                {displayGregDay}
-              </span>
+              <span className={cn(
+                "text-xs md:text-sm leading-3 mt-0.5",
+                isHoliday || isSaturday ? "text-red-500 dark:text-red-400" : "text-gray-400 dark:text-gray-300"
+              )}>{adDisplay}</span>
             </div>
-            
-            <div className="mt-1 flex flex-col gap-0.5">
-              {/* Show festivals with enhanced styling */}
+            {/* Festival / International / Tithi Notes */}
+            <div className="flex flex-col gap-0.5 w-full items-center mb-1">
               {festivalNames.map((name, index) => (
-                <div 
-                  key={`festival-${index}`} 
-                  className={cn(
-                    "text-[10px] truncate",
-                    "text-red-600 font-semibold",
-                    "animate-fade-in-slow",
-                    language === 'np' ? "font-noto" : "",
-                    isHoliday && "bg-red-50/50 rounded px-1 py-0.5"
-                  )}
-                >
+                <div key={`festival-${index}`} className={cn(
+                  "text-[11px] truncate font-semibold px-1 rounded",
+                  "text-red-600 dark:text-red-300 bg-red-50/60 dark:bg-red-900/30 animate-fade-in-slow",
+                  language === 'np' ? "font-noto" : ""
+                )}>
                   <span className="inline-flex items-center">
                     <Calendar className="h-3 w-3 mr-0.5" />
                     {name}
                   </span>
                 </div>
               ))}
-              
-              {/* Show international days */}
               {internationalDays.map((name, index) => (
-                <div 
-                  key={`international-${index}`} 
-                  className={cn(
-                    "text-[10px] truncate text-nepali-turquoise animate-fade-in-slow",
-                    language === 'np' ? "font-noto" : ""
-                  )}
-                >
+                <div key={`international-${index}`} className={cn(
+                  "text-[10px] truncate text-nepali-turquoise animate-fade-in-slow",
+                  language === 'np' ? "font-noto" : ""
+                )}>
                   <span className="inline-flex items-center">
                     <Globe className="h-3 w-3 mr-0.5" />
                     {name}
                   </span>
                 </div>
               ))}
-              
-              {/* Show thithi with improved styling */}
               {thithi && (
                 <div className={cn(
                   "text-[10px] truncate text-nepali-purple animate-fade-in-slow",
@@ -135,42 +122,31 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
             </div>
           </div>
         </TooltipTrigger>
-        <TooltipContent 
-          className={cn(
-            (isHoliday || isSaturday) ? "bg-red-50 border-red-200" : "",
-            "animate-in fade-in-0 zoom-in-95"
-          )}
-        >
+        <TooltipContent className={cn(
+          (isHoliday || isSaturday) ? "bg-red-50 dark:bg-red-900 border-red-200 dark:border-red-800" : "",
+          "animate-in fade-in-0 zoom-in-95 dark:bg-gray-900"
+        )}>
           <div className={cn(
             "text-sm",
             language === 'np' ? "font-noto" : ""
           )}>
             {isSaturday && (
-              <div className="font-medium text-red-600">
+              <div className="font-medium text-red-600 dark:text-red-300">
                 {language === 'np' ? "शनिबार बिदा" : "Saturday Holiday"}
               </div>
             )}
             {festivalNames.map((name, index) => (
-              <div 
-                key={`tooltip-festival-${index}`} 
-                className={cn(
-                  "font-medium",
-                  isHoliday ? "text-red-600" : "text-nepali-red"
-                )}
-              >
+              <div key={`tooltip-festival-${index}`} className={cn(
+                "font-medium",
+                isHoliday ? "text-red-600 dark:text-red-300" : "text-nepali-red"
+              )}>
                 {name}
               </div>
             ))}
             {internationalDays.map((name, index) => (
-              <div key={`tooltip-international-${index}`} className="font-medium text-nepali-turquoise">
-                {name}
-              </div>
+              <div key={`tooltip-international-${index}`} className="font-medium text-nepali-turquoise">{name}</div>
             ))}
-            {thithi && (
-              <div className="font-medium text-nepali-purple">
-                {thithi}
-              </div>
-            )}
+            {thithi && (<div className="font-medium text-nepali-purple">{thithi}</div>)}
           </div>
         </TooltipContent>
       </Tooltip>
