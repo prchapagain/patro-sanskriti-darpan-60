@@ -5,7 +5,7 @@ import {
   Moon, 
   Star, 
   BookOpen, 
-  Crystals,
+  Diamond, // Replacing Crystals with Diamond
   CalendarDays
 } from "lucide-react";
 import { 
@@ -36,7 +36,7 @@ const Panchanga: React.FC<PanchangaProps> = ({
     { name: language === 'np' ? "तिथि" : "Tithi", value: thithi, icon: <Moon className="h-4 w-4" /> },
     { name: language === 'np' ? "नक्षत्र" : "Nakshatra", value: nakshatra, icon: <Star className="h-4 w-4" /> },
     { name: language === 'np' ? "योग" : "Yoga", value: yoga, icon: <BookOpen className="h-4 w-4" /> },
-    { name: language === 'np' ? "करण" : "Karana", value: karana, icon: <Crystals className="h-4 w-4" /> },
+    { name: language === 'np' ? "करण" : "Karana", value: karana, icon: <Diamond className="h-4 w-4" /> },
     { name: language === 'np' ? "वार" : "Weekday", value: vaar, icon: <CalendarDays className="h-4 w-4" /> }
   ].filter(item => item.value);
 
