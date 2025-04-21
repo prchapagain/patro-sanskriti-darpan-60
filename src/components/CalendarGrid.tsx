@@ -52,8 +52,10 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     todayBs = getBsDate(realToday);
   }
 
-  // Render day names
+  // Render day names and calendar grid
   const calendarCells: React.ReactNode[] = [];
+  
+  // Render day names
   bsDays.forEach((day, i) => {
     calendarCells.push(
       <div key={`header-${i}`} className={cn(
@@ -65,7 +67,17 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     );
   });
   
-  // Current month days only - exactly the number of days in the month
+  // Get the day of the week for the first day of the BS month (0 = Sunday, 6 = Saturday)
+  const firstDayWeekday = firstDayOfBsMonth.getDay();
+  
+  // Add empty cells for the days of the week before the first day
+  for (let i = 0; i < firstDayWeekday; i++) {
+    calendarCells.push(
+      <div key={`empty-start-${i}`} className="bg-transparent"></div>
+    );
+  }
+  
+  // Current month days - exactly the number of days in the month
   for (let day = 1; day <= daysInMonth; day++) {
     // Find correct Date for this BS day
     let gDate: Date | null = null;
@@ -99,6 +111,16 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
         isSaturday={gDate.getDay() === 6}
       />
     );
+  }
+  
+  // Add empty cells for the remaining days of the week after the last day
+  const lastDayWeekday = (firstDayWeekday + daysInMonth) % 7;
+  if (lastDayWeekday !== 0) {
+    for (let i = lastDayWeekday; i < 7; i++) {
+      calendarCells.push(
+        <div key={`empty-end-${i}`} className="bg-transparent"></div>
+      );
+    }
   }
 
   return (
