@@ -84,3 +84,9 @@
     background-size: 104px 52px;
   }
 }
+
+@layer utilities {
+  .neo-blur {
+    @apply backdrop-blur-2xl bg-black/40 border border-white/10;
+  }
+}
