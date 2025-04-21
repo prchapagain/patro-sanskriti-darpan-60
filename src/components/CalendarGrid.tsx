@@ -68,7 +68,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     );
   });
   
-  // Previous month's trailing days (always show 6*7 = 42 days)
+  // Previous month's trailing days (to fill start of grid)
   for (let i = 0; i < startDayIndex; i++) {
     const prevDate = new Date(firstDayOfBsMonth as Date);
     prevDate.setDate(prevDate.getDate() - (startDayIndex - i));
@@ -88,7 +88,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     );
   }
   
-  // Current month days
+  // Current month days - ensuring we only render the exact number of days in the month
   for (let day = 1; day <= daysInMonth; day++) {
     // Find correct Date for this BS day
     let gDate: Date | null = null;
@@ -124,9 +124,11 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
     );
   }
   
-  // Next month's leading days
-  const totalCells = 42;
-  const remaining = totalCells - (daysInMonth + startDayIndex);
+  // Next month's leading days (to fill remainder of 6*7 grid)
+  const totalCells = 42; // Standard calendar grid: 6 weeks × 7 days
+  const cellsUsedSoFar = startDayIndex + daysInMonth;
+  const remaining = totalCells - cellsUsedSoFar;
+  
   for (let day = 1; day <= remaining; day++) {
     const nd = new Date(firstDayOfBsMonth as Date);
     nd.setDate((firstDayOfBsMonth as Date).getDate() + daysInMonth + day - 1);
