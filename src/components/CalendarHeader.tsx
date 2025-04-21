@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getBsDate, bsMonths } from "@/utils/dateUtils";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Calendar, Languages } from "lucide-react";
+import PrintCalendar from "./PrintCalendar";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 
@@ -75,6 +76,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
           <Languages className="h-4 w-4 mr-1" />
           {language === 'np' ? 'ENG' : 'नेपाली'}
         </Button>
+        <PrintCalendar language={language} />
         <ThemeToggle theme={theme} onToggle={toggle} />
       </div>
     </div>

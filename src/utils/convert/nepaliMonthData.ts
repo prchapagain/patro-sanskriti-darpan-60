@@ -1,6 +1,15 @@
 
 // Define the number of days in each month of the Nepali calendar for different years
+// A safe pattern to use for future years where exact data is not known
+const DEFAULT_YEAR_PATTERN = [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30];
+
+// Common patterns in BS calendar for projection
+const PATTERN_A = [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30]; // Common pattern
+const PATTERN_B = [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31]; // Common pattern
+const PATTERN_C = [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30]; // Common pattern
+
 export const nepaliMonthData: { [year: number]: number[] } = {
+  // Existing data
   2070: [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
   2071: [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
   2072: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
@@ -31,7 +40,32 @@ export const nepaliMonthData: { [year: number]: number[] } = {
   2097: [30, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
   2098: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
   2099: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
-  2100: [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30]
+  2100: [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+  // Extended years data (projected patterns)
+  2101: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+  2102: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+  2103: [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+  2104: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+  2105: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+  2106: [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+  2107: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+  2108: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+  2109: [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+  2110: [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31]
+};
+
+// Get month lengths - with pattern fallback for years beyond our dataset
+export const getMonthLengths = (year: number): number[] => {
+  // If we have exact data, use it
+  if (nepaliMonthData[year]) {
+    return nepaliMonthData[year];
+  }
+  
+  // Otherwise use patterns based on year modulo 3
+  const mod = year % 3;
+  if (mod === 0) return [...PATTERN_A]; // Clone to prevent mutation
+  if (mod === 1) return [...PATTERN_B];
+  return [...PATTERN_C];
 };
 
 // Reference date for conversion: Jan 1, 2014 AD = Poush 17, 2070 BS

@@ -1,5 +1,5 @@
 
-import { nepaliMonthData, referenceEnDate, referenceBsDate } from './nepaliMonthData';
+import { nepaliMonthData, referenceEnDate, referenceBsDate, getMonthLengths } from './nepaliMonthData';
 
 // Calculate the total number of days from a given BS year/month/day to the reference date
 export const getTotalDaysFromBsDate = (bsYear: number, bsMonth: number, bsDay: number): number => {
@@ -9,13 +9,10 @@ export const getTotalDaysFromBsDate = (bsYear: number, bsMonth: number, bsDay: n
   if (bsYear < referenceBsDate.year) {
     // If the year is before the reference year
     for (let year = bsYear; year < referenceBsDate.year; year++) {
-      if (nepaliMonthData[year]) {
-        for (let i = 0; i < 12; i++) {
-          totalDays += nepaliMonthData[year][i];
-        }
-      } else {
-        // Fallback for years not in our data
-        totalDays += 365;
+      // Use getMonthLengths which handles years not in our dataset
+      const yearData = getMonthLengths(year);
+      for (let i = 0; i < 12; i++) {
+        totalDays += yearData[i];
       }
     }
     
@@ -80,12 +77,18 @@ export const getGregorianDate = (
   bsMonth: number,
   bsDay: number
 ): Date => {
-  // Calculate days difference from reference BS date
-  const daysDifference = getTotalDaysFromBsDate(bsYear, bsMonth, bsDay);
-  
-  // Create new date by adding/subtracting days from reference English date
-  const resultDate = new Date(referenceEnDate);
-  resultDate.setDate(referenceEnDate.getDate() + daysDifference);
-  
-  return resultDate;
+  try {
+    // Calculate days difference from reference BS date
+    const daysDifference = getTotalDaysFromBsDate(bsYear, bsMonth, bsDay);
+    
+    // Create new date by adding/subtracting days from reference English date
+    const resultDate = new Date(referenceEnDate);
+    resultDate.setDate(referenceEnDate.getDate() + daysDifference);
+    return resultDate;
+  } catch (error) {
+    console.error(`Error converting BS date (${bsYear}-${bsMonth+1}-${bsDay}) to Gregorian:`, error);
+    // Fallback to a reasonable estimation for dates outside our mapping
+    const estimatedDate = new Date(bsYear - 57, bsMonth, bsDay); // Rough estimation
+    return estimatedDate;
+  }
 };

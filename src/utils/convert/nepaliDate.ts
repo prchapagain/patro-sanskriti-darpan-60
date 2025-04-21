@@ -96,26 +96,31 @@ export const getTithiFromBsDate = (bsYear: number, bsMonth: number, bsDay: numbe
     return specificTithiData[dateKey];
   }
   
-  // If not in our lookup table, convert BS to Gregorian date
-  const gregDate = getGregorianDateConverter(bsYear, bsMonth, bsDay);
-  
-  // Use a more accurate method based on lunar cycles
-  // The lunar cycle is approximately 29.53 days
-  const lunarCycleLength = 29.53;
-  
-  // Reference new moon date (known new moon)
-  const refNewMoon = new Date(2023, 3, 19); // April 19, 2023 was New Moon
-  
-  // Calculate days since reference new moon
-  const daysSinceRefNewMoon = (gregDate.getTime() - refNewMoon.getTime()) / (1000 * 60 * 60 * 24);
-  
-  // Calculate position in lunar cycle (0 to 29.53)
-  const positionInCycle = ((daysSinceRefNewMoon % lunarCycleLength) + lunarCycleLength) % lunarCycleLength;
-  
-  // Convert to tithi (1-30)
-  const tithiNum = Math.floor(positionInCycle / lunarCycleLength * 30) + 1;
-  
-  return tithiNum <= 30 ? tithiNum : 1; // Ensure we return a value between 1-30
+  try {
+    // If not in our lookup table, convert BS to Gregorian date
+    const gregDate = getGregorianDateConverter(bsYear, bsMonth, bsDay);
+    
+    // Use a more accurate method based on lunar cycles
+    // The lunar cycle is approximately 29.53 days
+    const lunarCycleLength = 29.53;
+    
+    // Reference new moon date (known new moon)
+    const refNewMoon = new Date(2023, 3, 19); // April 19, 2023 was New Moon
+    
+    // Calculate days since reference new moon
+    const daysSinceRefNewMoon = (gregDate.getTime() - refNewMoon.getTime()) / (1000 * 60 * 60 * 24);
+    
+    // Calculate position in lunar cycle (0 to 29.53)
+    const positionInCycle = ((daysSinceRefNewMoon % lunarCycleLength) + lunarCycleLength) % lunarCycleLength;
+    
+    // Convert to tithi (1-30)
+    const tithiNum = Math.floor(positionInCycle / lunarCycleLength * 30) + 1;
+    
+    return tithiNum <= 30 ? tithiNum : 1; // Ensure we return a value between 1-30
+  } catch (error) {
+    // Fallback to a safe default if conversion fails
+    return 15; // Middle of the lunar cycle as default
+  }
 };
 
 // Get tithi name from date components

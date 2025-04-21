@@ -1,7 +1,7 @@
 
 import React from "react";
 import CalendarCell from "./CalendarCell";
-import { bsDays, bsMonthLengths, getBsDate, getGregorianDate } from "@/utils/dateUtils";
+import { bsDays, getBsDate, getGregorianDate, getMonthLengths } from "@/utils/dateUtils";
 import { cn } from "@/lib/utils";
 
 interface CalendarGridProps {
@@ -15,7 +15,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   const { year: bsYear, month: bsMonth } = currentBs;
   
   // Get number of BS days in month
-  const daysInMonth = bsMonthLengths[bsYear]?.[bsMonth] || 30;
+  const daysInMonth = getMonthLengths(bsYear)[bsMonth];
   
   // Find which Gregorian day is BS 1
   let firstDayOfBsMonth: Date | null = null;
