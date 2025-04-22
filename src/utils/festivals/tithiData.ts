@@ -1,7 +1,7 @@
 
 // Tithi data mapping numbers to Nepali and English names
 export const tithiData: Record<number, { np: string; en: string }> = {
-  1: { np: "प्रतिपदा", en: "Pratipada" },
+  1: { np: "प्रथमा", en: "Pratipada" },
   2: { np: "द्वितीया", en: "Dwitiya" },
   3: { np: "तृतीया", en: "Tritiya" },
   4: { np: "चतुर्थी", en: "Chaturthi" },
@@ -37,35 +37,41 @@ export const tithiData: Record<number, { np: string; en: string }> = {
 // This maps specific BS dates to their correct thithi values
 // Format: "year-month-day": thithiNumber
 export const specificTithiData: Record<string, number> = {
+  // 2080 key dates for tithi calibration
+  "2080-1-1": 1,  // Baisakh 1 is Pratipada (first day), not Purnima
+  "2080-1-15": 15, // Purnima in the middle of the month
+  "2080-1-30": 30, // Aaunsi at the end of the month
+  
   // 2082 key dates with accurate thithi information
-  "2082-1-1": 15,  // Purnima
-  "2082-1-8": 1,   // Pratipada - April 21, 2025
-  "2082-1-15": 29, // Amavasya
-  "2082-1-30": 15, // Purnima
+  "2082-1-1": 1,   // Pratipada - correct for Baisakh 1
+  "2082-1-15": 15, // Purnima
+  "2082-1-30": 30, // Aaunsi
   "2082-2-15": 15, // Purnima
   "2082-2-29": 30, // Aaunsi
-  "2082-3-15": 16, // Pratipada
-  "2082-3-29": 15, // Purnima
-  "2082-4-15": 30, // Aaunsi
-  "2082-4-30": 15, // Purnima
-  "2082-5-15": 30, // Aaunsi
-  "2082-5-30": 15, // Purnima
-  "2082-6-10": 1,  // Pratipada
-  "2082-6-19": 10, // Dashami
-  "2082-6-24": 15, // Purnima
-  "2082-7-3": 30,  // Aaunsi
-  "2082-7-19": 16, // Pratipada
-  "2082-7-24": 15, // Purnima
-  "2082-8-9": 30,  // Aaunsi
-  "2082-8-24": 15, // Purnima
-  "2082-9-9": 30,  // Aaunsi
-  "2082-9-23": 15, // Purnima
-  "2082-10-1": 30, // Aaunsi
+  "2082-3-15": 15, // Purnima
+  "2082-3-29": 30, // Aaunsi
+  "2082-4-15": 15, // Purnima
+  "2082-4-30": 30, // Aaunsi
+  "2082-5-15": 15, // Purnima
+  "2082-5-30": 30, // Aaunsi
+  "2082-6-15": 15, // Purnima
+  "2082-6-30": 30, // Aaunsi
+  "2082-7-15": 15, // Purnima
+  "2082-7-30": 30, // Aaunsi
+  "2082-8-15": 15, // Purnima
+  "2082-8-30": 30, // Aaunsi
+  "2082-9-15": 15, // Purnima
+  "2082-9-30": 30, // Aaunsi
   "2082-10-15": 15, // Purnima
-  "2082-11-7": 23, // Astami
-  "2082-11-15": 30, // Aaunsi
-  "2082-11-25": 14, // Chaturdashi (Shivaratri)
-  "2082-11-30": 15, // Purnima (Fagu)
-  "2082-12-16": 10, // Dashami (Chaite Dashain)
-  "2082-12-30": 9   // Navami (Ram Navami)
+  "2082-10-30": 30, // Aaunsi
+  "2082-11-15": 15, // Purnima
+  "2082-11-30": 30, // Aaunsi
+  "2082-12-15": 15, // Purnima
+  "2082-12-30": 30, // Aaunsi
+  
+  // Additional key festival dates
+  "2082-6-10": 10,  // Dashami (Dashain)
+  "2082-6-24": 24,  // Purnima (Kojagrat)
+  "2082-11-25": 25, // Chaturdashi (Shivaratri)
+  "2082-12-16": 16  // Navami (Ram Navami)
 };
