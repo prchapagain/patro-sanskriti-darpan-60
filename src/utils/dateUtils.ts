@@ -7,6 +7,7 @@ export * from './convert/numbers';
 export * from './convert/dates';
 export { getMonthLengths } from './convert/nepaliMonthData';
 export { getTithiName, getTithiFromBsDate } from './convert/nepaliDate';
+export { getTithiNameFromGregorian, getTithiNumberFromGregorian } from './convert/astronomicalCalculations';
 
 // Export our new Nepali calendar functions
 export { 

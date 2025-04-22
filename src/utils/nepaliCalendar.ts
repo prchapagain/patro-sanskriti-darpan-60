@@ -1,8 +1,11 @@
 
 // Utility functions for Nepali calendar calculations
 import { nepaliMonthData, referenceEnDate2, referenceBsDate2 } from "./convert/nepaliMonthData";
-import { getTithiName, getTithiFromBsDate } from "./convert/nepaliDate";
 import { bsMonths } from "./calendar/names";
+import { 
+  getTithiNameFromGregorian,
+  getTithiNumberFromGregorian
+} from "./convert/astronomicalCalculations";
 
 // Get BS date from Gregorian date
 export const getBsDateFromGregorian = (date: Date): { year: number; month: number; day: number } => {
@@ -108,9 +111,72 @@ export const getCurrentBsDate = (): { year: number; month: number; day: number }
 
 // Get tithi info for the given BS date
 export const getTithiInfo = (bsDate: { year: number; month: number; day: number }, language: 'np' | 'en'): string => {
-  const tithiNumber = getTithiFromBsDate(bsDate.year, bsDate.month, bsDate.day);
-  return getTithiName(tithiNumber, language);
+  // Get the corresponding Gregorian date for the BS date
+  const gregDate = getGregorianDateFromBs(bsDate.year, bsDate.month, bsDate.day);
+  
+  // Use the astronomical calculations to get the tithi name
+  return getTithiNameFromGregorian(gregDate, language);
 };
+
+// Helper function to convert BS date to Gregorian date
+function getGregorianDateFromBs(bsYear: number, bsMonth: number, bsDay: number): Date {
+  // Start with the reference date
+  const referenceGregorianDate = new Date(referenceEnDate2.getTime());
+  const referenceBsDate = { ...referenceBsDate2 };
+  
+  // Calculate the difference in days between the reference BS date and the given BS date
+  let daysDifference = 0;
+  
+  // If the target date is before the reference date
+  if (bsYear < referenceBsDate.year || 
+      (bsYear === referenceBsDate.year && bsMonth < referenceBsDate.month) || 
+      (bsYear === referenceBsDate.year && bsMonth === referenceBsDate.month && bsDay < referenceBsDate.day)) {
+    
+    // Count backwards from reference date
+    let year = referenceBsDate.year;
+    let month = referenceBsDate.month;
+    let day = referenceBsDate.day;
+    
+    while (year > bsYear || (year === bsYear && month > bsMonth) || (year === bsYear && month === bsMonth && day > bsDay)) {
+      daysDifference--;
+      day--;
+      
+      if (day === 0) {
+        month--;
+        if (month < 0) {
+          year--;
+          month = 11;
+        }
+        day = nepaliMonthData[year]?.[month] || 30;
+      }
+    }
+  } else {
+    // Count forwards from reference date
+    let year = referenceBsDate.year;
+    let month = referenceBsDate.month;
+    let day = referenceBsDate.day;
+    
+    while (year < bsYear || (year === bsYear && month < bsMonth) || (year === bsYear && month === bsMonth && day < bsDay)) {
+      daysDifference++;
+      day++;
+      
+      const daysInMonth = nepaliMonthData[year]?.[month] || 30;
+      if (day > daysInMonth) {
+        day = 1;
+        month++;
+        if (month > 11) {
+          year++;
+          month = 0;
+        }
+      }
+    }
+  }
+  
+  // Create a new Date object by adding/subtracting the days difference
+  const resultDate = new Date(referenceGregorianDate.getTime());
+  resultDate.setDate(referenceGregorianDate.getDate() + daysDifference);
+  return resultDate;
+}
 
 // Check if two BS dates are the same
 export const isSameBsDate = (
