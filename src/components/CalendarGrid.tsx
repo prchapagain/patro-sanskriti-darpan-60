@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import CalendarCell from "./CalendarCell";
 import { bsDays, getBsDate, getGregorianDate, getMonthLengths } from "@/utils/dateUtils";
 import { cn } from "@/lib/utils";
@@ -7,12 +6,36 @@ import { cn } from "@/lib/utils";
 interface CalendarGridProps {
   currentDate: Date;
   language: 'np' | 'en';
+  onAutoRefresh: () => void;
 }
 
-const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) => {
+const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language, onAutoRefresh }) => {
   // Find BS date for displayed month
   const currentBs = getBsDate(currentDate);
   const { year: bsYear, month: bsMonth } = currentBs;
+  
+  // Auto-refresh to keep the calendar updated
+  useEffect(() => {
+    // Set up auto-refresh to update the calendar at midnight
+    const calculateTimeToMidnight = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      return tomorrow.getTime() - now.getTime();
+    };
+
+    // Schedule the first refresh at midnight
+    const timeToMidnight = calculateTimeToMidnight();
+    const refreshTimer = setTimeout(() => {
+      onAutoRefresh();
+      // After the first refresh, set up daily refreshes
+      const dailyRefresh = setInterval(onAutoRefresh, 24 * 60 * 60 * 1000);
+      return () => clearInterval(dailyRefresh);
+    }, timeToMidnight);
+
+    return () => clearTimeout(refreshTimer);
+  }, [onAutoRefresh]);
   
   // Get number of BS days in month
   const daysInMonth = getMonthLengths(bsYear)[bsMonth];
@@ -55,11 +78,12 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language }) =>
   // Render day names and calendar grid
   const calendarCells: React.ReactNode[] = [];
   
-  // Render day names
+  // Render day names with increased height
   bsDays.forEach((day, i) => {
     calendarCells.push(
       <div key={`header-${i}`} className={cn(
-        "text-center font-bold py-2 uppercase text-xs md:text-sm bg-gray-50 dark:bg-gray-900",
+        "text-center font-bold py-3 md:py-4 uppercase text-xs md:text-sm bg-gray-50 dark:bg-gray-900",
+        "flex items-center justify-center min-h-[50px]",
         i === 6 ? "text-red-600" : ""
       )}>
         {language === 'np' ? day.np : day.en}

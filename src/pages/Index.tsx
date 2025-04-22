@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CalendarHeader from "@/components/CalendarHeader";
 import CalendarGrid from "@/components/CalendarGrid";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,19 @@ const Index = () => {
     return today;
   });
   const [language, setLanguage] = useState<'np' | 'en'>('np');
+
+  // Auto-refresh when the date changes (midnight)
+  const handleAutoRefresh = () => {
+    console.log('Auto refreshing calendar with new date');
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    setCurrentDate(today);
+  };
+
+  // Ensure the calendar is up-to-date when the component first mounts
+  useEffect(() => {
+    handleAutoRefresh();
+  }, []);
 
   const handlePrevMonth = () => {
     const newDate = new Date(currentDate);
@@ -94,6 +107,7 @@ const Index = () => {
             <CalendarGrid
               currentDate={currentDate}
               language={language}
+              onAutoRefresh={handleAutoRefresh}
             />
           </div>
           <footer className="mt-8 text-center text-gray-500 dark:text-gray-400 text-sm">

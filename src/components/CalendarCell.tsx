@@ -41,6 +41,7 @@ function BigDateView({ bsDay, adDay, language, isToday, isHoliday, isSaturday }:
       </span>
       <span className={cn(
         "text-xs font-medium mt-1",
+        language === "np" ? "text-xs opacity-70" : "text-xs",
         isHoliday || isSaturday ? "text-red-400 dark:text-red-300" : "text-gray-500 dark:text-gray-300"
       )}>
         {language === "np" ? toNepaliDigits(adDay) : adDay}
