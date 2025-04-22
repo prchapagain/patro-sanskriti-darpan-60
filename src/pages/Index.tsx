@@ -4,7 +4,7 @@ import CalendarHeader from "@/components/CalendarHeader";
 import CalendarGrid from "@/components/CalendarGrid";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { getBsDate } from "@/utils/dateUtils";
+import { getBsDateFromGregorian, getTithiInfo, getCurrentBsDate } from "@/utils/nepaliCalendar";
 import Panchanga from "@/components/Panchanga";
 
 const Index = () => {
@@ -45,9 +45,9 @@ const Index = () => {
   };
   const toggleLanguage = () => setLanguage(language === 'np' ? 'en' : 'np');
 
-  // Get today's BS date for Panchanga information
-  const todayBs = getBsDate(currentDate);
-  const thithi = language === 'np' ? "प्रतिपदा" : "Pratipada";
+  // Get today's BS date and tithi for Panchanga information
+  const todayBs = getBsDateFromGregorian(new Date());
+  const thithi = getTithiInfo(todayBs, language);
   const nakshatra = language === 'np' ? "अश्विनी" : "Ashwini";
   const yoga = language === 'np' ? "विष्कुम्भ" : "Vishkumbh";
   const karana = language === 'np' ? "बव" : "Bav";

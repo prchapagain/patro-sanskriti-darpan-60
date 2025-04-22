@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import CalendarCell from "./CalendarCell";
-import { bsDays, getBsDate, getGregorianDate, getMonthLengths } from "@/utils/dateUtils";
+import { bsDays, getMonthLengths } from "@/utils/dateUtils";
+import { getBsDateFromGregorian, getTodayBsDate } from "@/utils/nepaliCalendar";
 import { cn } from "@/lib/utils";
 
 interface CalendarGridProps {
@@ -11,7 +12,7 @@ interface CalendarGridProps {
 
 const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language, onAutoRefresh }) => {
   // Find BS date for displayed month
-  const currentBs = getBsDate(currentDate);
+  const currentBs = getBsDateFromGregorian(currentDate);
   const { year: bsYear, month: bsMonth } = currentBs;
   
   // Auto-refresh to keep the calendar updated
@@ -45,7 +46,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language, onAu
   for (let d = 0; d < 31; d++) {
     const tryDate = new Date(currentDate);
     tryDate.setDate(1 + d);
-    const bs = getBsDate(tryDate);
+    const bs = getBsDateFromGregorian(tryDate);
     if (bs.year === bsYear && bs.month === bsMonth && bs.day === 1) {
       firstDayOfBsMonth = tryDate;
       break;
@@ -57,23 +58,10 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language, onAu
     firstDayOfBsMonth.setDate(1);
   }
   
-  // Today for highlighting - Set April 21, 2025 as today if we're viewing that month
+  // Today for highlighting - Use actual today's date
   const realToday = new Date();
-  
-  // Special case for April 21, 2025 (8 Baishakh 2082)
-  const isShowingBaishakh2082 = bsYear === 2082 && bsMonth === 0;
-  let todayBs = getBsDate(realToday);
-  
-  if (isShowingBaishakh2082) {
-    // If we're viewing Baishakh 2082, set today as 8 Baishakh (April 21, 2025)
-    const april21_2025 = new Date(2025, 3, 21);
-    april21_2025.setHours(0, 0, 0, 0);
-    realToday.setTime(april21_2025.getTime());
-    todayBs = { year: 2082, month: 0, day: 8 };
-  } else {
-    realToday.setHours(0, 0, 0, 0);
-    todayBs = getBsDate(realToday);
-  }
+  realToday.setHours(0, 0, 0, 0);
+  const todayBs = getTodayBsDate();
 
   // Render day names and calendar grid
   const calendarCells: React.ReactNode[] = [];
@@ -108,7 +96,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, language, onAu
     for (let offset = -1; offset < 3; offset++) { // Include -1 to handle edge cases
       const guess = new Date(firstDayOfBsMonth as Date);
       guess.setDate((firstDayOfBsMonth as Date).getDate() + day - 1 + offset);
-      const bs = getBsDate(guess);
+      const bs = getBsDateFromGregorian(guess);
       if (bs.year === bsYear && bs.month === bsMonth && bs.day === day) {
         gDate = guess;
         break;
