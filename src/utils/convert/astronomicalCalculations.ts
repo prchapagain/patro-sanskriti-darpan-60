@@ -94,7 +94,7 @@ export function getPanchangaTithi(year: number, month: number, day: number) {
 }
 
 // Get tithi name for a given Gregorian date and language
-export function getTithiNameFromGregorian(date: Date, language: 'np' | 'en'): string {
+export function getTithiNameFromGregorian(date: Date, language: 'np' | 'en' = 'np'): string {
   const year = date.getFullYear();
   const month = date.getMonth() + 1; // JavaScript months are 0-based
   const day = date.getDate();

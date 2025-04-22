@@ -1,3 +1,4 @@
+
 import { getGregorianDate as getGregorianDateConverter } from './dateConversion';
 import { tithiData, specificTithiData } from '../festivals/tithiData';
 import { nepaliMonthData, referenceEnDate2, referenceBsDate2 } from './nepaliMonthData';
@@ -22,8 +23,6 @@ export const getBsDate = (date: Date): { year: number; month: number; day: numbe
   // Calculate difference in days (ensuring proper date comparison)
   const diffTime = inputDate.getTime() - referenceDate.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  
-  console.log('Converting date:', inputDate.toISOString(), 'to BS. Diff days from reference:', diffDays);
   
   // If date is earlier than reference, handle differently
   if (diffDays < 0) {
@@ -110,6 +109,6 @@ export const getTithiFromBsDate = (bsYear: number, bsMonth: number, bsDay: numbe
 };
 
 // Get tithi name from date components
-export const getTithiName = (tithiNumber: number, language: 'np' | 'en'): string => {
+export const getTithiName = (tithiNumber: number, language: 'np' | 'en' = 'np'): string => {
   return tithiData[tithiNumber]?.[language] || "";
 };

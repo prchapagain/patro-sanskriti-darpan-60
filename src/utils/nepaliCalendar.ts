@@ -27,8 +27,6 @@ export const getBsDateFromGregorian = (date: Date): { year: number; month: numbe
   const diffTime = inputDate.getTime() - referenceDate.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   
-  console.log('Converting date:', inputDate.toISOString(), 'to BS. Diff days from reference:', diffDays);
-  
   // If date is earlier than reference, handle differently
   if (diffDays < 0) {
     // For dates before reference, work backwards
