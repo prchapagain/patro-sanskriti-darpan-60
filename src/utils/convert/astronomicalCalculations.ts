@@ -10,13 +10,13 @@ export const tithiNames = {
     "प्रथमा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी",
     "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "प्रथमा",
     "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी",
-    "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"
+    "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "औंसी"
   ],
   en: [
     "Prathama", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Sasthi", "Saptami", "Astami",
     "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Prathama",
     "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Sasthi", "Saptami", "Astami", "Navami", "Dashami",
-    "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"
+    "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Aaunsi"
   ]
 };
 
@@ -33,7 +33,7 @@ export function gregorianToJulian(year: number, month: number, day: number): num
     + day + B - 1524.5;
 }
 
-// Get moon's longitude
+// Get moon's longitude - based on nepdate library approach
 function getMoonLongitude(t: number): number {
   const L1 = 218.316 + 481267.8813 * t;
   const D = 297.8502 + 445267.1115 * t;
@@ -49,7 +49,7 @@ function getMoonLongitude(t: number): number {
   return lon % 360;
 }
 
-// Get sun's longitude
+// Get sun's longitude - based on nepdate library approach
 function getSunLongitude(t: number): number {
   const l0 = 280.4665 + 36000.7698 * t;
   const m = 357.5291 + 35999.0503 * t;
@@ -72,7 +72,7 @@ export function getPanchangaTithi(year: number, month: number, day: number) {
   const moonLongitude = getMoonLongitude(t);
   const sunLongitude = getSunLongitude(t);
 
-  // Apply Nepal timezone offset (approximately)
+  // Apply Nepal timezone offset (approximately 5.75 hours, or 5:45)
   const nepalOffsetDegrees = 5.75 * 15;
   let moon = (moonLongitude + nepalOffsetDegrees) % 360;
   let sun = (sunLongitude + nepalOffsetDegrees) % 360;
@@ -81,7 +81,7 @@ export function getPanchangaTithi(year: number, month: number, day: number) {
   let diff = moon - sun;
   if (diff < 0) diff += 360;
 
-  // Calculate tithi index (0-29)
+  // Calculate tithi index (0-29) based on the angle difference divided by 12 degrees
   const tithiIndex = Math.floor(diff / 12) % 30;
   const paksha = tithiIndex < 15 ? "शुक्ल पक्ष" : "कृष्ण पक्ष";
 

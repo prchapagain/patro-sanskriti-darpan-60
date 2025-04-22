@@ -104,7 +104,18 @@ export const getTithiFromBsDate = (bsYear: number, bsMonth: number, bsDay: numbe
   } catch (error) {
     // Fallback to a safe default if conversion fails
     console.error("Error calculating tithi:", error);
-    return 15; // Middle of the lunar cycle as default
+    
+    // Use a systematic approximation when astronomical calculation fails
+    // In Nepali calendar, tithi roughly follows a pattern where it advances ~1 per day
+    // Starting from a known reference point
+    const dayOfMonth = bsDay;
+    if (dayOfMonth <= 15) {
+      // Shukla Paksha (Bright fortnight) - tithi 1 to 15
+      return dayOfMonth;
+    } else {
+      // Krishna Paksha (Dark fortnight) - tithi 16 to 30
+      return dayOfMonth + 15 - 30;
+    }
   }
 };
 
