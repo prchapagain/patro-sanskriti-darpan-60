@@ -1,37 +1,40 @@
 
-// Utility functions for Nepali calendar calculations
-import { nepaliMonthData, referenceEnDate2, referenceBsDate2 } from "./convert/nepaliMonthData";
+// Utility functions for Nepali calendar calculations - matching nepdate C++ library
+import { nepaliMonthData } from "./convert/nepaliMonthData";
 import { bsMonths } from "./calendar/names";
 import { getTithiNameFromGregorian } from "./convert/astronomicalCalculations";
 import { specificTithiData } from "./festivals/tithiData";
 
-// Get BS date from Gregorian date
+// Reference dates from nepdate library
+const referenceEnDate = new Date(2023, 3, 14); // April 14, 2023 (0-indexed month)
+const referenceBsDate = {
+  year: 2080,
+  month: 0, // Baisakh = 0 (0-indexed)
+  day: 1
+};
+
+// Get BS date from Gregorian date - matching nepdate implementation
 export const getBsDateFromGregorian = (date: Date): { year: number; month: number; day: number } => {
   // Ensure we're working with a fresh date to avoid timezone issues
   const inputDate = new Date(date.getTime());
   // Reset hours to ensure consistent day calculations
   inputDate.setHours(0, 0, 0, 0);
   
-  // Using the more recent reference point
-  const referenceDate = new Date(referenceEnDate2.getTime());
-  // Reset hours to ensure consistent day calculations
+  // Using reference point from nepdate
+  const referenceDate = new Date(referenceEnDate.getTime());
   referenceDate.setHours(0, 0, 0, 0);
-  
-  const referenceBsYear = referenceBsDate2.year;
-  const referenceBsMonth = referenceBsDate2.month;
-  const referenceBsDay = referenceBsDate2.day;
   
   // Calculate difference in days (ensuring proper date comparison)
   const diffTime = inputDate.getTime() - referenceDate.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   
-  // If date is earlier than reference, handle differently
+  // If date is earlier than reference, handle differently - matching nepdate algorithm
   if (diffDays < 0) {
-    // For dates before reference, work backwards
+    // For dates before reference, work backwards - same as nepdate C++
     let totalDays = -diffDays;
-    let year = referenceBsYear;
-    let month = referenceBsMonth;
-    let day = referenceBsDay;
+    let year = referenceBsDate.year;
+    let month = referenceBsDate.month;
+    let day = referenceBsDate.day;
     
     while (totalDays > 0) {
       if (day > 1) {
@@ -46,7 +49,7 @@ export const getBsDateFromGregorian = (date: Date): { year: number; month: numbe
           month = 11; // Move to Chaitra
         }
         
-        // Get days in this month
+        // Get days in this month - same logic as nepdate
         const daysInMonth = nepaliMonthData[year]?.[month] || 30;
         day = daysInMonth;
         totalDays--;
@@ -55,10 +58,10 @@ export const getBsDateFromGregorian = (date: Date): { year: number; month: numbe
     
     return { year, month, day };
   } else {
-    // For dates after or equal to reference
-    let year = referenceBsYear;
-    let month = referenceBsMonth;
-    let day = referenceBsDay;
+    // For dates after or equal to reference - matching nepdate logic
+    let year = referenceBsDate.year;
+    let month = referenceBsDate.month;
+    let day = referenceBsDate.day;
     let remainingDays = diffDays;
     
     while (remainingDays > 0) {
@@ -100,29 +103,11 @@ export const getCurrentBsDate = (): { year: number; month: number; day: number }
   return getBsDateFromGregorian(today);
 };
 
-// Get tithi info for the given BS date
-export const getTithiInfo = (bsDate: { year: number; month: number; day: number }, language: 'np' | 'en'): string => {
-  // First check specific tithi data for known dates
-  const dateKey = `${bsDate.year}-${bsDate.month + 1}-${bsDate.day}`;
-  if (specificTithiData[dateKey]) {
-    const tithiNum = specificTithiData[dateKey];
-    return language === 'np' ? 
-      tithiNames.np[tithiNum - 1] : 
-      tithiNames.en[tithiNum - 1];
-  }
-  
-  // Get the corresponding Gregorian date for the BS date
-  const gregDate = getGregorianDateFromBs(bsDate.year, bsDate.month, bsDate.day);
-  
-  // Use the astronomical calculations to get the tithi name
-  return getTithiNameFromGregorian(gregDate, language);
-};
-
-// Helper function to convert BS date to Gregorian date - improved for accuracy
-function getGregorianDateFromBs(bsYear: number, bsMonth: number, bsDay: number): Date {
+// Helper function to convert BS date to Gregorian date - matching nepdate algorithm
+export function getGregorianDateFromBs(bsYear: number, bsMonth: number, bsDay: number): Date {
+  // Match nepdate C++ implementation
   // Start with the reference date
-  const referenceGregorianDate = new Date(referenceEnDate2.getTime());
-  const referenceBsDate = { ...referenceBsDate2 };
+  const referenceGregorianDate = new Date(referenceEnDate.getTime());
   
   // Calculate the difference in days between the reference BS date and the given BS date
   let daysDifference = 0;
@@ -132,7 +117,7 @@ function getGregorianDateFromBs(bsYear: number, bsMonth: number, bsDay: number):
       (bsYear === referenceBsDate.year && bsMonth < referenceBsDate.month) || 
       (bsYear === referenceBsDate.year && bsMonth === referenceBsDate.month && bsDay < referenceBsDate.day)) {
     
-    // Count backwards from reference date
+    // Count backwards from reference date - matching nepdate logic
     let year = referenceBsDate.year;
     let month = referenceBsDate.month;
     let day = referenceBsDate.day;
@@ -151,7 +136,7 @@ function getGregorianDateFromBs(bsYear: number, bsMonth: number, bsDay: number):
       }
     }
   } else {
-    // Count forwards from reference date
+    // Count forwards from reference date - matching nepdate logic
     let year = referenceBsDate.year;
     let month = referenceBsDate.month;
     let day = referenceBsDate.day;
@@ -178,6 +163,26 @@ function getGregorianDateFromBs(bsYear: number, bsMonth: number, bsDay: number):
   return resultDate;
 }
 
+// Get tithi info for the given BS date - using nepdate algorithm
+export const getTithiInfo = (bsDate: { year: number; month: number; day: number }, language: 'np' | 'en'): string => {
+  // First check specific tithi data for known dates
+  const dateKey = `${bsDate.year}-${bsDate.month + 1}-${bsDate.day}`;
+  if (specificTithiData[dateKey]) {
+    const tithiNum = specificTithiData[dateKey];
+    // Using the tithiNames from astronomicalCalculations to ensure consistency
+    const { tithiNames } = require('./convert/astronomicalCalculations');
+    return language === 'np' ? 
+      tithiNames.np[tithiNum - 1] : 
+      tithiNames.en[tithiNum - 1];
+  }
+  
+  // Get the corresponding Gregorian date for the BS date
+  const gregDate = getGregorianDateFromBs(bsDate.year, bsDate.month, bsDate.day);
+  
+  // Use the astronomical calculations to get the tithi name - same as in nepdate
+  return getTithiNameFromGregorian(gregDate, language);
+};
+
 // Check if two BS dates are the same
 export const isSameBsDate = (
   date1: { year: number; month: number; day: number },
@@ -191,6 +196,3 @@ export const getTodayBsDate = (): { year: number; month: number; day: number } =
   const today = new Date();
   return getBsDateFromGregorian(today);
 };
-
-// Import tithiNames from astronomical calculations
-import { tithiNames } from "./convert/astronomicalCalculations";

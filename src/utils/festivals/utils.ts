@@ -1,9 +1,9 @@
+
 import { festivals } from './festivalData';
 import { internationalDays } from './internationalDays';
 import { specificTithiData, tithiData } from './tithiData';
-import { getTithiFromBsDate, getTithiName } from '../convert/nepaliDate';
-import { getTithiNameFromGregorian } from '../convert/astronomicalCalculations';
-import { getGregorianDate } from '../convert/dateConversion';
+import { getTithiNumberFromGregorian } from '../convert/astronomicalCalculations';
+import { getGregorianDateFromBs } from '../nepaliCalendar';
 import type { DayInfo } from './types';
 
 export function hasFestival(year: number, month: number, day: number): boolean {
@@ -34,6 +34,7 @@ export function getFestivalName(year: number, month: number, day: number, langua
 }
 
 export function getThithi(year: number, month: number, day: number, language: 'np' | 'en'): string | null {
+  // First check the festival data for tithi information
   const yearStr = year.toString();
   const monthStr = (month + 1).toString();
   const dayStr = day.toString();
@@ -43,21 +44,24 @@ export function getThithi(year: number, month: number, day: number, language: 'n
     return dayInfo.thithi[language];
   }
   
+  // Check specific tithi data
   const dateKey = `${year}-${month + 1}-${day}`;
-  
   if (specificTithiData[dateKey]) {
     const tithiNum = specificTithiData[dateKey];
     return tithiData[tithiNum]?.[language] || null;
   }
   
+  // Use astronomical calculation as a fallback
   try {
-    const gregDate = getGregorianDate(year, month, day);
-    return getTithiNameFromGregorian(gregDate, language);
+    // Convert BS to Gregorian date using the nepdate-compatible algorithm
+    const gregDate = getGregorianDateFromBs(year, month, day);
+    
+    // Get tithi from the Gregorian date
+    const tithiNum = getTithiNumberFromGregorian(gregDate);
+    return tithiData[tithiNum]?.[language] || null;
   } catch (error) {
     console.error("Error getting tithi:", error);
-    
-    const tithiNumber = getTithiFromBsDate(year, month, day);
-    return getTithiName(tithiNumber, language);
+    return null;
   }
 }
 

@@ -1,10 +1,12 @@
 
 // Astronomical calculations for tithi (lunar day)
+// Matching the logic from https://github.com/khumnath/nepdate
+
 const PI = Math.PI;
 const d2r = PI / 180;
 const r2d = 180 / PI;
 
-// Single source of truth for tithi names
+// Single source of truth for tithi names - matching nepdate library
 export const tithiNames = {
   np: [
     "प्रथमा", "द्वितीया", "तृतीया", "चतुर्थी", "पञ्चमी", "षष्ठी", "सप्तमी", "अष्टमी",
@@ -20,8 +22,9 @@ export const tithiNames = {
   ]
 };
 
-// Convert Gregorian date to Julian date - improved based on nepdate
+// Convert Gregorian date to Julian date - matching the C++ implementation
 export function gregorianToJulian(year: number, month: number, day: number): number {
+  // Same logic as nepdate C++ implementation
   if (month <= 2) {
     year--;
     month += 12;
@@ -33,14 +36,14 @@ export function gregorianToJulian(year: number, month: number, day: number): num
     + day + B - 1524.5;
 }
 
-// Get moon's longitude - improved based on nepdate library 
+// Get moon's longitude - directly mapped from nepdate C++ implementation
 function getMoonLongitude(t: number): number {
-  // Updated coefficients from the reference implementation
+  // Coefficients from nepdate C++ library
   const L1 = 218.316 + 481267.8813 * t;
   const D = 297.8502 + 445267.1115 * t;
   const M1 = 134.963 + 477198.8671 * t;
 
-  // Improved calculation with additional terms
+  // Same formula as in nepdate C++ version
   const lon = L1
     + 6.289 * Math.sin(d2r * M1)
     - 1.274 * Math.sin(d2r * (2 * D - M1))
@@ -51,13 +54,13 @@ function getMoonLongitude(t: number): number {
   return lon % 360;
 }
 
-// Get sun's longitude - improved based on nepdate library
+// Get sun's longitude - directly mapped from nepdate C++ implementation
 function getSunLongitude(t: number): number {
-  // Updated coefficients from the reference implementation
+  // Coefficients from nepdate C++ library
   const l0 = 280.4665 + 36000.7698 * t;
   const m = 357.5291 + 35999.0503 * t;
 
-  // Improved calculation with better coefficients
+  // Same formula as in nepdate C++ version
   const c = (1.9146 - 0.004817 * t - 0.000014 * t * t) * Math.sin(d2r * m)
     + (0.019993 - 0.000101 * t) * Math.sin(d2r * 2 * m)
     + 0.000289 * Math.sin(d2r * 3 * m);
@@ -65,27 +68,30 @@ function getSunLongitude(t: number): number {
   return (l0 + c) % 360;
 }
 
-// Get tithi (lunar day) information for a given Gregorian date - improved algorithm
+// Get tithi (lunar day) information - matching nepdate C++ implementation
 export function getPanchangaTithi(year: number, month: number, day: number) {
-  // Convert to Julian date
-  const julianDate = gregorianToJulian(year, month, day);
+  // Convert to Julian date - same approach as nepdate
+  const julianDate = gregorianToJulian(year, month + 1, day);
   const tdays = julianDate - 2451545.0;
   const t = tdays / 36525.0;
 
-  // Calculate sun and moon longitudes
+  // Calculate sun and moon longitudes - same formula as nepdate
   const moonLongitude = getMoonLongitude(t);
   const sunLongitude = getSunLongitude(t);
 
-  // Apply Nepal timezone offset (5:45)
-  const nepalOffsetDegrees = 5.75 * 15;
-  let moon = (moonLongitude + nepalOffsetDegrees / 365.25) % 360;
-  let sun = (sunLongitude + nepalOffsetDegrees / 365.25) % 360;
+  // Apply Nepal timezone offset (5:45) - matching nepdate C++ implementation
+  const nepalOffsetDegrees = 5.75 * 15 / 360;
+  let moon = moonLongitude + nepalOffsetDegrees;
+  if (moon >= 360) moon -= 360;
+  
+  let sun = sunLongitude + nepalOffsetDegrees;
+  if (sun >= 360) sun -= 360;
 
   // Calculate the difference between moon and sun longitudes
   let diff = moon - sun;
   if (diff < 0) diff += 360;
 
-  // Calculate tithi index (0-29) based on the angle difference divided by 12 degrees
+  // Calculate tithi index (0-29) based on the angle - exact nepdate algorithm
   const tithiIndex = Math.floor(diff / 12) % 30;
   const paksha = tithiIndex < 15 ? "शुक्ल पक्ष" : "कृष्ण पक्ष";
 
@@ -100,7 +106,7 @@ export function getPanchangaTithi(year: number, month: number, day: number) {
 // Get tithi name for a given Gregorian date and language
 export function getTithiNameFromGregorian(date: Date, language: 'np' | 'en' = 'np'): string {
   const year = date.getFullYear();
-  const month = date.getMonth() + 1; // JavaScript months are 0-based
+  const month = date.getMonth(); // Keep 0-based for JavaScript Date
   const day = date.getDate();
   
   const tithiInfo = getPanchangaTithi(year, month, day);
@@ -110,7 +116,7 @@ export function getTithiNameFromGregorian(date: Date, language: 'np' | 'en' = 'n
 // Get tithi number for a given Gregorian date
 export function getTithiNumberFromGregorian(date: Date): number {
   const year = date.getFullYear();
-  const month = date.getMonth() + 1; // JavaScript months are 0-based
+  const month = date.getMonth(); // Keep 0-based for JavaScript Date
   const day = date.getDate();
   
   const tithiInfo = getPanchangaTithi(year, month, day);
