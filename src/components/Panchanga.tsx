@@ -32,6 +32,7 @@ const Panchanga: React.FC<PanchangaProps> = ({
 }) => {
   if (!thithi && !nakshatra && !yoga && !karana && !vaar) return null;
 
+  // Create panchanga items - following nepdate C++ library structure
   const items = [
     { name: language === 'np' ? "तिथि" : "Tithi", value: thithi, icon: <Moon className="h-4 w-4" /> },
     { name: language === 'np' ? "नक्षत्र" : "Nakshatra", value: nakshatra, icon: <Star className="h-4 w-4" /> },

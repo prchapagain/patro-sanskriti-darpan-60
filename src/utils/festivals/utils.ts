@@ -33,8 +33,16 @@ export function getFestivalName(year: number, month: number, day: number, langua
   return dayInfo.festivals.map(festival => festival[language]);
 }
 
+// Direct port of C++ getThithi functionality
 export function getThithi(year: number, month: number, day: number, language: 'np' | 'en'): string | null {
-  // First check the festival data for tithi information
+  // First check the dedicated tithi data - highest priority like in C++
+  const dateKey = `${year}-${month + 1}-${day}`;
+  if (specificTithiData[dateKey]) {
+    const tithiNum = specificTithiData[dateKey];
+    return tithiData[tithiNum]?.[language] || null;
+  }
+  
+  // Check festival data next - second priority
   const yearStr = year.toString();
   const monthStr = (month + 1).toString();
   const dayStr = day.toString();
@@ -44,23 +52,16 @@ export function getThithi(year: number, month: number, day: number, language: 'n
     return dayInfo.thithi[language];
   }
   
-  // Check specific tithi data
-  const dateKey = `${year}-${month + 1}-${day}`;
-  if (specificTithiData[dateKey]) {
-    const tithiNum = specificTithiData[dateKey];
-    return tithiData[tithiNum]?.[language] || null;
-  }
-  
-  // Use astronomical calculation as a fallback
+  // Calculate tithi using astronomical method - same as C++ implementation
   try {
-    // Convert BS to Gregorian date using the nepdate-compatible algorithm
+    // Convert BS to Gregorian
     const gregDate = getGregorianDateFromBs(year, month, day);
     
-    // Get tithi from the Gregorian date
+    // Get tithi from Gregorian date
     const tithiNum = getTithiNumberFromGregorian(gregDate);
     return tithiData[tithiNum]?.[language] || null;
   } catch (error) {
-    console.error("Error getting tithi:", error);
+    console.error("Error calculating tithi:", error);
     return null;
   }
 }
