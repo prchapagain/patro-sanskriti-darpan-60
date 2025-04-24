@@ -5,7 +5,7 @@ import {
   Moon, 
   Star, 
   BookOpen, 
-  Diamond, // Replacing Crystals with Diamond
+  Diamond, 
   CalendarDays
 } from "lucide-react";
 import { 

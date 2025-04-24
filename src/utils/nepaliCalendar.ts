@@ -2,10 +2,8 @@
 // Utility functions for Nepali calendar calculations
 import { nepaliMonthData, referenceEnDate2, referenceBsDate2 } from "./convert/nepaliMonthData";
 import { bsMonths } from "./calendar/names";
-import { 
-  getTithiNameFromGregorian,
-  getTithiNumberFromGregorian
-} from "./convert/astronomicalCalculations";
+import { getTithiNameFromGregorian } from "./convert/astronomicalCalculations";
+import { specificTithiData } from "./festivals/tithiData";
 
 // Get BS date from Gregorian date
 export const getBsDateFromGregorian = (date: Date): { year: number; month: number; day: number } => {
@@ -93,12 +91,7 @@ export const getBsDateFromGregorian = (date: Date): { year: number; month: numbe
 // Convert BS date to formatted string
 export const formatBsDate = (bsDate: { year: number; month: number; day: number }, language: 'np' | 'en'): string => {
   const monthName = bsMonths[bsDate.month][language];
-  
-  if (language === 'np') {
-    return `${bsDate.day} ${monthName} ${bsDate.year}`;
-  } else {
-    return `${bsDate.day} ${monthName} ${bsDate.year}`;
-  }
+  return `${bsDate.day} ${monthName} ${bsDate.year}`;
 };
 
 // Get current BS date
@@ -109,6 +102,15 @@ export const getCurrentBsDate = (): { year: number; month: number; day: number }
 
 // Get tithi info for the given BS date
 export const getTithiInfo = (bsDate: { year: number; month: number; day: number }, language: 'np' | 'en'): string => {
+  // First check specific tithi data for known dates
+  const dateKey = `${bsDate.year}-${bsDate.month + 1}-${bsDate.day}`;
+  if (specificTithiData[dateKey]) {
+    const tithiNum = specificTithiData[dateKey];
+    return language === 'np' ? 
+      tithiNames.np[tithiNum - 1] : 
+      tithiNames.en[tithiNum - 1];
+  }
+  
   // Get the corresponding Gregorian date for the BS date
   const gregDate = getGregorianDateFromBs(bsDate.year, bsDate.month, bsDate.day);
   
@@ -116,7 +118,7 @@ export const getTithiInfo = (bsDate: { year: number; month: number; day: number 
   return getTithiNameFromGregorian(gregDate, language);
 };
 
-// Helper function to convert BS date to Gregorian date
+// Helper function to convert BS date to Gregorian date - improved for accuracy
 function getGregorianDateFromBs(bsYear: number, bsMonth: number, bsDay: number): Date {
   // Start with the reference date
   const referenceGregorianDate = new Date(referenceEnDate2.getTime());
@@ -189,3 +191,6 @@ export const getTodayBsDate = (): { year: number; month: number; day: number } =
   const today = new Date();
   return getBsDateFromGregorian(today);
 };
+
+// Import tithiNames from astronomical calculations
+import { tithiNames } from "./convert/astronomicalCalculations";

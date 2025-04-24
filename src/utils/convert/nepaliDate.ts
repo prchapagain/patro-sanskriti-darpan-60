@@ -1,8 +1,8 @@
 
 import { getGregorianDate as getGregorianDateConverter } from './dateConversion';
 import { tithiData, specificTithiData } from '../festivals/tithiData';
-import { nepaliMonthData, referenceEnDate2, referenceBsDate2 } from './nepaliMonthData';
 import { getTithiNumberFromGregorian, getTithiNameFromGregorian } from './astronomicalCalculations';
+import { nepaliMonthData, referenceEnDate2, referenceBsDate2 } from './nepaliMonthData';
 
 // Convert Gregorian (AD) date to Bikram Sambat (BS) date
 export const getBsDate = (date: Date): { year: number; month: number; day: number } => {
@@ -87,7 +87,7 @@ export const getBsDate = (date: Date): { year: number; month: number; day: numbe
   }
 };
 
-// Calculate tithi (lunar day) for a given BS date
+// Calculate tithi (lunar day) for a given BS date - prioritizing specificTithiData
 export const getTithiFromBsDate = (bsYear: number, bsMonth: number, bsDay: number): number => {
   // First check if we have specific tithi data for this date
   const dateKey = `${bsYear}-${bsMonth + 1}-${bsDay}`;
@@ -100,14 +100,12 @@ export const getTithiFromBsDate = (bsYear: number, bsMonth: number, bsDay: numbe
     const gregDate = getGregorianDateConverter(bsYear, bsMonth, bsDay);
     
     // Use the astronomical calculations to get the tithi number
-    return getTithiNumberFromGregorian(gregDate);
+    const tithiNum = getTithiNumberFromGregorian(gregDate);
+    return tithiNum;
   } catch (error) {
-    // Fallback to a safe default if conversion fails
     console.error("Error calculating tithi:", error);
     
-    // Use a systematic approximation when astronomical calculation fails
-    // In Nepali calendar, tithi roughly follows a pattern where it advances ~1 per day
-    // Starting from a known reference point
+    // Fallback to a simple approximation when all else fails
     const dayOfMonth = bsDay;
     if (dayOfMonth <= 15) {
       // Shukla Paksha (Bright fortnight) - tithi 1 to 15
@@ -119,7 +117,8 @@ export const getTithiFromBsDate = (bsYear: number, bsMonth: number, bsDay: numbe
   }
 };
 
-// Get tithi name from date components
+// Get tithi name from tithi number
 export const getTithiName = (tithiNumber: number, language: 'np' | 'en' = 'np'): string => {
+  // Use tithiData lookup
   return tithiData[tithiNumber]?.[language] || "";
 };

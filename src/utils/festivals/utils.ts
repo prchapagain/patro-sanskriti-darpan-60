@@ -1,8 +1,9 @@
-
 import { festivals } from './festivalData';
 import { internationalDays } from './internationalDays';
-import { tithiData, specificTithiData } from './tithiData';
+import { specificTithiData, tithiData } from './tithiData';
 import { getTithiFromBsDate, getTithiName } from '../convert/nepaliDate';
+import { getTithiNameFromGregorian } from '../convert/astronomicalCalculations';
+import { getGregorianDate } from '../convert/dateConversion';
 import type { DayInfo } from './types';
 
 export function hasFestival(year: number, month: number, day: number): boolean {
@@ -49,8 +50,15 @@ export function getThithi(year: number, month: number, day: number, language: 'n
     return tithiData[tithiNum]?.[language] || null;
   }
   
-  const tithiNumber = getTithiFromBsDate(year, month, day);
-  return tithiData[tithiNumber]?.[language] || null;
+  try {
+    const gregDate = getGregorianDate(year, month, day);
+    return getTithiNameFromGregorian(gregDate, language);
+  } catch (error) {
+    console.error("Error getting tithi:", error);
+    
+    const tithiNumber = getTithiFromBsDate(year, month, day);
+    return getTithiName(tithiNumber, language);
+  }
 }
 
 export function getInternationalDays(date: Date, language: 'np' | 'en'): string[] {
