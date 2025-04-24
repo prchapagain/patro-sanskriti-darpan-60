@@ -2,7 +2,7 @@
 // Utility functions for Nepali calendar calculations - matching nepdate C++ library
 import { nepaliMonthData } from "./convert/nepaliMonthData";
 import { bsMonths } from "./calendar/names";
-import { getTithiNameFromGregorian } from "./convert/astronomicalCalculations";
+import { getTithiNameFromGregorian, tithiNames } from "./convert/astronomicalCalculations";
 import { specificTithiData } from "./festivals/tithiData";
 
 // Reference dates from nepdate library
@@ -169,8 +169,7 @@ export const getTithiInfo = (bsDate: { year: number; month: number; day: number 
   const dateKey = `${bsDate.year}-${bsDate.month + 1}-${bsDate.day}`;
   if (specificTithiData[dateKey]) {
     const tithiNum = specificTithiData[dateKey];
-    // Using the tithiNames from astronomicalCalculations to ensure consistency
-    const { tithiNames } = require('./convert/astronomicalCalculations');
+    // Using the tithiNames imported from astronomicalCalculations to ensure consistency
     return language === 'np' ? 
       tithiNames.np[tithiNum - 1] : 
       tithiNames.en[tithiNum - 1];
